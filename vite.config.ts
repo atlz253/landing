@@ -9,7 +9,17 @@ export default defineConfig({
   },
   plugins: [
     simpleHtmlPlugin({
-      minify: true,
+      minify: {
+        collapseWhitespaces: "all",
+        minifyCss: true,
+        minifyJs: true,
+        minifyJson: true,
+        quotes: true,
+        removeComments: true,
+        removeEmptyAttributes: true,
+        removeRedundantAttributes: "all",
+        tagOmission: false,
+      },
     }),
   ],
 });
