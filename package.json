@@ -1,12 +1,11 @@
 {
   "type": "module",
   "scripts": {
-    "start": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
   },
   "devDependencies": {
-    "vite": "^7.1.5",
-    "vite-plugin-simple-html": "^1.0.1"
+    "astro": "^5.13.11"
   }
 }
