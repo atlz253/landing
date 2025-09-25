@@ -1,0 +1,72 @@
+---
+import Card from "../Card.astro";
+import GitHubLogo from "./assets/github.svg";
+import TelegramLogo from "./assets/telegram.svg";
+import VKLogo from "./assets/VK.svg";
+
+const logoSize = 36;
+---
+
+<style>
+  .container {
+    display: flex;
+    justify-content: center;
+    margin: var(--space-12);
+  }
+
+  .center {
+    display: flex;
+    gap: var(--space-10);
+    flex-direction: column;
+  }
+
+  .name {
+    font-size: 56px;
+  }
+
+  .posts {
+    display: flex;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--color-grey-8);
+    justify-content: space-around;
+  }
+
+  .links {
+    display: flex;
+    gap: var(--space-8);
+    justify-content: center;
+  }
+</style>
+
+<Card>
+  <div class="container">
+    <div class="center">
+      <h1 class="name">Федор Алексеев</h1>
+      <ul class="posts">
+        <li>Программный инженер</li>
+        <li>|</li>
+        <li>Web-разработчик</li>
+        <li>|</li>
+        <li>Музыкант</li>
+      </ul>
+      <ul class="links">
+        <li>
+          <a href="https://github.com/atlz253" title="GitHub"
+            ><GitHubLogo width={logoSize} height={logoSize} /></a
+          >
+        </li>
+        <li>
+          <a href="https://t.me/atlz931" title="Telegram"
+            ><TelegramLogo width={logoSize} height={logoSize} /></a
+          >
+        </li>
+        <li>
+          <a href="https://vk.com/falexeev2014" title="VK"
+            ><VKLogo width={logoSize} height={logoSize} /></a
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+</Card>
