@@ -1,17 +1,26 @@
 ---
-import userverImage from "./assets/userver.png";
-import gameWatchImage from "./assets/gameWatch.png";
+import userverPNGImage from "./assets/userver.png";
+import userverWEBPImage from "./assets/userver.webp";
+import gameWatchPNGImage from "./assets/gameWatch.png";
+import gameWatchWEBPImage from "./assets/gameWatch.webp";
 import { Code } from "astro:components";
 import PortfolioCard from "./components/PortfolioCard.astro";
 import List from "../List.astro";
 import Link from "../Link.astro";
 import PrettyParagraph from "../PrettyParagraph.astro";
+import { url } from "../../utils/css";
 
-const userverImageURL = `url(${userverImage.src})`;
-const gameWatchImageURL = `url(${gameWatchImage.src})`;
+const userverImageURLs = [
+  url(userverWEBPImage.src),
+  url(userverPNGImage.src),
+].join(",");
+const gameWatchImageURLs = [
+  url(gameWatchWEBPImage.src),
+  url(gameWatchPNGImage.src),
+].join(",");
 ---
 
-<style define:vars={{ userverImageURL, gameWatchImageURL }}>
+<style define:vars={{ userverImageURLs, gameWatchImageURLs }}>
   #portfolio {
     display: grid;
     gap: var(--space-12);
@@ -46,12 +55,12 @@ const gameWatchImageURL = `url(${gameWatchImage.src})`;
 
     .tile_tests {
       min-height: 300px;
-      background-image: var(--gameWatchImageURL);
+      background-image: var(--gameWatchImageURLs);
     }
 
     .tile_userver {
       min-height: 370px;
-      background-image: var(--userverImageURL);
+      background-image: var(--userverImageURLs);
     }
   }
 </style>
