@@ -21,12 +21,12 @@ const logoSize = 36;
   }
 
   .name {
-    font-size: 56px;
+    font-size: 32px;
   }
 
   .posts {
     display: flex;
-    font-size: 16px;
+    font-size: 10px;
     font-weight: 500;
     color: var(--color-grey-8);
     justify-content: space-around;
@@ -36,6 +36,16 @@ const logoSize = 36;
     display: flex;
     gap: var(--space-8);
     justify-content: center;
+  }
+
+  @media (min-width: 520px) {
+    .name {
+      font-size: 56px;
+    }
+
+    .posts {
+      font-size: 16px;
+    }
   }
 </style>
 
