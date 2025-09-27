@@ -1,0 +1,19 @@
+---
+import type { JSX } from "astro/jsx-runtime";
+
+export interface ListItem {
+  children: () => JSX.Element;
+}
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<style>
+  .list {
+    line-height: 1.3;
+  }
+</style>
+
+<ul class:list={["list", className]} {...rest}>
+  <slot />
+</ul>

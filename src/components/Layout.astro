@@ -5,6 +5,14 @@ import GlobalStyles from "./GlobalStyles.astro";
 import GoogleFonts from "./astro/GoogleFonts.astro";
 ---
 
+<style>
+  .main {
+    display: flex;
+    gap: var(--space-12);
+    flex-direction: column;
+  }
+</style>
+
 <GlobalStyles />
 <html lang="en">
   <head>
@@ -15,7 +23,7 @@ import GoogleFonts from "./astro/GoogleFonts.astro";
     <GoogleFonts />
   </head>
   <body>
-    <main>
+    <main class="main">
       <slot />
     </main>
     <YandexMetrikaCounter />

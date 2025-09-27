@@ -46,6 +46,17 @@
     --color-grey-3: #dedfe3;
     --color-grey-2: #e9eaec;
     --color-grey-1: #f4f4f6;
+
+    --color-blue-10: #080d21;
+    --color-blue-9: #132053;
+    --color-blue-8: #393c93;
+    --color-blue-7: #1e3385;
+    --color-blue-6: #2a46b7;
+    --color-blue-5: #3453d1;
+    --color-blue-4: #6980dd;
+    --color-blue-3: #9babe8;
+    --color-blue-2: #cdd5f4;
+    --color-blue-1: #dee3f7;
   }
 
   body,
@@ -55,13 +66,19 @@
   h4,
   h5,
   h6,
-  ul {
+  ul,
+  pre,
+  p {
     margin: 0;
+  }
+
+  body,
+  a {
+    color: var(--color-black);
   }
 
   body {
     line-height: 1;
-    color: var(--color-black);
     background-color: var(--color-white);
     font-family: "IBM Plex Sans", sans-serif;
   }
@@ -73,5 +90,14 @@
   ul {
     list-style-type: none;
     padding-inline-start: 0;
+  }
+
+  pre {
+    padding: var(--space-8);
+    border-radius: var(--space-6);
+  }
+
+  a {
+    text-decoration: none;
   }
 </style>
