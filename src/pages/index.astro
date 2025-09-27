@@ -2,9 +2,15 @@
 import Layout from "../components/Layout.astro";
 import FirstScreen from "../components/FirstScreen/index.astro";
 import Portfolio from "../components/Portfolio/index.astro";
+import Head from "../components/Head.astro";
 ---
 
-<Layout>
-  <FirstScreen />
-  <Portfolio />
-</Layout>
+<html lang="ru">
+  <head>
+    <Head />
+  </head>
+  <Layout>
+    <FirstScreen />
+    <Portfolio />
+  </Layout>
+</html>

@@ -1,8 +1,5 @@
 ---
-import YandexMetrika from "./YandexMetrika/YandexMetrika.astro";
 import YandexMetrikaCounter from "./YandexMetrika/YandexMetrikaCounter.astro";
-import GlobalStyles from "./GlobalStyles.astro";
-import GoogleFonts from "./GoogleFonts.astro";
 ---
 
 <style>
@@ -13,19 +10,9 @@ import GoogleFonts from "./GoogleFonts.astro";
   }
 </style>
 
-<GlobalStyles />
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Федор Алексеев</title>
-    <YandexMetrika />
-    <GoogleFonts />
-  </head>
-  <body>
-    <main class="main">
-      <slot />
-    </main>
-    <YandexMetrikaCounter />
-  </body>
-</html>
+<body>
+  <main class="main">
+    <slot />
+  </main>
+  <YandexMetrikaCounter />
+</body>
