@@ -12,6 +12,10 @@ const logoSize = 36;
     gap: var(--space-8);
     justify-content: center;
   }
+
+  .links.links_scale svg:hover {
+    scale: 1.1;
+  }
 </style>
 
 <ul class="links">
@@ -31,3 +35,11 @@ const logoSize = 36;
     >
   </li>
 </ul>
+
+<script>
+  import { getVarioqubFlags } from "../Yandex/getVarioqubFlags";
+  getVarioqubFlags().then((flags) => {
+    if (!flags["social_media_links"]?.includes("scale_on_hover")) return;
+    document.querySelector(".links")?.classList.add("links_scale");
+  });
+</script>

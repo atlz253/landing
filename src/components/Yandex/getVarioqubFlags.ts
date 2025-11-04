@@ -1,4 +1,6 @@
-export function getVarioqubFlags() {
+export function getVarioqubFlags(): Promise<{
+  [key: string]: string[] | undefined;
+}> {
   return new Promise((resolve, reject) => {
     if (ymab === undefined) reject(new Error("Varioqub не инициализирован"));
     else
