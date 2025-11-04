@@ -1,10 +1,6 @@
 ---
 import Card from "../Card.astro";
-import GitHubLogo from "./assets/github.svg";
-import TelegramLogo from "./assets/telegram.svg";
-import VKLogo from "./assets/VK.svg";
-
-const logoSize = 36;
+import SocialMediaLinks from "../SocialMediaLinks/index.astro";
 ---
 
 <style>
@@ -32,12 +28,6 @@ const logoSize = 36;
     justify-content: space-around;
   }
 
-  .links {
-    display: flex;
-    gap: var(--space-8);
-    justify-content: center;
-  }
-
   @media (min-width: 520px) {
     .name {
       font-size: 56px;
@@ -60,23 +50,7 @@ const logoSize = 36;
         <li>|</li>
         <li>Музыкант</li>
       </ul>
-      <ul class="links">
-        <li>
-          <a href="https://github.com/atlz253" title="GitHub"
-            ><GitHubLogo width={logoSize} height={logoSize} /></a
-          >
-        </li>
-        <li>
-          <a href="https://t.me/+ONmOoTgmeDgxOWYy" title="Telegram"
-            ><TelegramLogo width={logoSize} height={logoSize} /></a
-          >
-        </li>
-        <li>
-          <a href="https://vk.com/falexeev2014" title="VK"
-            ><VKLogo width={logoSize} height={logoSize} /></a
-          >
-        </li>
-      </ul>
+      <SocialMediaLinks />
     </div>
   </div>
 </Card>

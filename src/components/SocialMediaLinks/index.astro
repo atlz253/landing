@@ -1,0 +1,33 @@
+---
+import GitHubLogo from "./assets/github.svg";
+import TelegramLogo from "./assets/telegram.svg";
+import VKLogo from "./assets/VK.svg";
+
+const logoSize = 36;
+---
+
+<style>
+  .links {
+    display: flex;
+    gap: var(--space-8);
+    justify-content: center;
+  }
+</style>
+
+<ul class="links">
+  <li>
+    <a href="https://github.com/atlz253" title="GitHub"
+      ><GitHubLogo width={logoSize} height={logoSize} /></a
+    >
+  </li>
+  <li>
+    <a href="https://t.me/+ONmOoTgmeDgxOWYy" title="Telegram"
+      ><TelegramLogo width={logoSize} height={logoSize} /></a
+    >
+  </li>
+  <li>
+    <a href="https://vk.com/falexeev2014" title="VK"
+      ><VKLogo width={logoSize} height={logoSize} /></a
+    >
+  </li>
+</ul>
