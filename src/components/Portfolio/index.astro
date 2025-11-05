@@ -9,6 +9,7 @@ import List from "../List.astro";
 import Link from "../Link.astro";
 import PrettyParagraph from "../PrettyParagraph.astro";
 import { url } from "../../utils/css";
+import PortfolioSlider from "./PortfolioSlider/index.astro";
 
 const userverImageURLs = [
   url(userverWEBPImage.src),
@@ -206,3 +207,20 @@ while(i <= count)
     ))
   }
 </section>
+
+<PortfolioSlider />
+
+<script>
+  import { foldStringToNumber } from "../../utils/number";
+  import { getClientID } from "../Yandex/getClientID";
+  import { sendUserParams } from "../Yandex/sendUserParams";
+
+  getClientID().then((clientID) => {
+    if ([0, 1].includes(foldStringToNumber(clientID) % 4)) return;
+    sendUserParams(clientID, { ab_portfolio_slider: true });
+    (document.querySelector("#portfolio") as HTMLElement).style.display =
+      "none";
+    (document.querySelector("#portfolioSlider") as HTMLElement).style.display =
+      "block";
+  });
+</script>
