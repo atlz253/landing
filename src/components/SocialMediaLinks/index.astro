@@ -43,7 +43,7 @@ const logoSize = 36;
 
   getClientID().then((clientID) => {
     if ([0, 2].includes(foldStringToNumber(clientID) % 4)) return;
-    sendUserParams(clientID, { ab_social_medial_links_scale_on_hover: true });
+    sendUserParams({ ab_social_medial_links_scale_on_hover: true });
     document.querySelector(".links")?.classList.add("links_scale");
   });
 </script>

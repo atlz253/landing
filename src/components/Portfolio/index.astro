@@ -217,7 +217,7 @@ while(i <= count)
 
   getClientID().then((clientID) => {
     if ([0, 1].includes(foldStringToNumber(clientID) % 4)) return;
-    sendUserParams(clientID, { ab_portfolio_slider: true });
+    sendUserParams({ ab_portfolio_slider: true });
     (document.querySelector("#portfolio") as HTMLElement).style.display =
       "none";
     (document.querySelector("#portfolioSlider") as HTMLElement).style.display =
