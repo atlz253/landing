@@ -37,9 +37,13 @@ const logoSize = 36;
 </ul>
 
 <script>
-  import { getVarioqubFlags } from "../Yandex/getVarioqubFlags";
-  getVarioqubFlags().then((flags) => {
-    if (!flags["social_media_links"]?.includes("scale_on_hover")) return;
+  import { getClientID } from "../Yandex/getClientID";
+  import { sendUserParams } from "../Yandex/sendUserParams";
+  import { foldStringToNumber } from "../../utils/number";
+
+  getClientID().then((clientID) => {
+    if (foldStringToNumber(clientID) % 2 === 0) return;
+    sendUserParams(clientID, { ab_social_medial_links_scale_on_hover: true });
     document.querySelector(".links")?.classList.add("links_scale");
   });
 </script>

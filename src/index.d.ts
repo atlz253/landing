@@ -1,11 +1,18 @@
 export {};
 
 declare global {
-  const ymab:
-    | ((
-        clientID: string,
-        method: structuredClone,
-        callback: (flags: { [key: string]: string[] }) => void
-      ) => void)
-    | undefined;
+  interface YM {
+    (
+      clientID: string,
+      method: "getClientID",
+      callback: (clientID: string) => void
+    ): void;
+    (
+      clientID: string,
+      method: "userParams",
+      data: Record<string, string | number | boolean>
+    ): void;
+  }
+
+  const ym: YM | undefined;
 }

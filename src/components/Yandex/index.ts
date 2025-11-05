@@ -1,0 +1,1 @@
+export const METRIKA_COUNTER_ID = "104114816";
