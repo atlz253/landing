@@ -24,8 +24,9 @@ import SocialMediaLinks from "../SocialMediaLinks/index.astro";
     display: flex;
     font-size: 10px;
     font-weight: 500;
+    gap: var(--space-10);
     color: var(--color-grey-8);
-    justify-content: space-around;
+    justify-content: center;
   }
 
   @media (min-width: 520px) {
@@ -54,3 +55,14 @@ import SocialMediaLinks from "../SocialMediaLinks/index.astro";
     </div>
   </div>
 </Card>
+
+<script>
+  const currentDate = new Date();
+  if (currentDate.getDate() === 23 && currentDate.getMonth() === 10) {
+    const name = document.querySelector(".name");
+    const span = document.createElement("span");
+    const birthYear = 2000;
+    span.innerText = ` | ${currentDate.getFullYear() - birthYear} 🥳`;
+    name?.appendChild(span);
+  }
+</script>
