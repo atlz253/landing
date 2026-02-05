@@ -13,37 +13,29 @@ const logoSize = 36;
     justify-content: center;
   }
 
-  .links.links_scale svg:hover {
+  .link > svg {
+    transition: scale 0.3s;
+  }
+
+  .link > svg:hover {
     scale: 1.1;
   }
 </style>
 
 <ul class="links">
   <li>
-    <a href="https://github.com/atlz253" title="GitHub"
+    <a href="https://github.com/atlz253" title="GitHub" class="link"
       ><GitHubLogo width={logoSize} height={logoSize} /></a
     >
   </li>
   <li>
-    <a href="https://t.me/+ONmOoTgmeDgxOWYy" title="Telegram"
+    <a href="https://t.me/+ONmOoTgmeDgxOWYy" title="Telegram" class="link"
       ><TelegramLogo width={logoSize} height={logoSize} /></a
     >
   </li>
   <li>
-    <a href="https://vk.com/falexeev2014" title="VK"
+    <a href="https://vk.com/falexeev2014" title="VK" class="link"
       ><VKLogo width={logoSize} height={logoSize} /></a
     >
   </li>
 </ul>
-
-<script>
-  import { getClientID } from "../Yandex/getClientID";
-  import { sendUserParams } from "../Yandex/sendUserParams";
-  import { foldStringToNumber } from "../../utils/number";
-
-  getClientID().then((clientID) => {
-    if ([0, 2].includes(foldStringToNumber(clientID) % 4)) return;
-    sendUserParams({ ab_social_medial_links_scale_on_hover: true });
-    document.querySelector(".links")?.classList.add("links_scale");
-  });
-</script>
