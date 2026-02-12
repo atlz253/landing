@@ -1,0 +1,72 @@
+name: Deploy to Yandex Object Storage
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Try to install yc cli and login into yandex cloud
+        uses: lxhan/yc-install@v3
+        with:
+          SA_KEY: ${{secrets.YC_SA_DEPLOY_JSON_CREDENTIALS}}
+
+      - name: Configure YC Folder Id
+        run: |
+          yc config set folder-id ${{ secrets.YC_FOLDER_ID }}
+          echo "Folder configured successfully"
+
+      - name: Generate bucket name
+        run: |
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BUCKET_NAME="myapp-${TIMESTAMP}-${{ github.run_id }}"
+          echo "NEW_BUCKET=$BUCKET_NAME" >> $GITHUB_ENV
+
+      - name: Create new bucket
+        run: |
+          yc storage bucket create --name ${{ env.NEW_BUCKET }}
+
+      - name: Upload files to Object Storage
+        uses: yc-actions/yc-obj-storage-upload@v3
+        with:
+          yc-sa-json-credentials: ${{secrets.YC_SA_DEPLOY_JSON_CREDENTIALS}}
+          bucket: ${{ env.NEW_BUCKET }}
+          root: ./dist
+          include: |
+            **/*
+
+      - name: Install envsubst
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gettext
+
+      - uses: dominicwatson/github-action-envsubst@v1
+        env:
+          BUCKET_NAME: ${{ env.NEW_BUCKET }}
+          BUCKET_READER_SERVICE_ACCOUNT_ID: ${{secrets.YC_SA_BUCKET_READER_ID}}
+        with:
+          files: |
+            ./.yandex/landing-gateway.yaml
+
+      - name: update API gateway
+        run: |
+          yc serverless api-gateway update --id ${{secrets.YC_LANDING_API_GATEWAY_ID}} --spec=./.yandex/landing-gateway.yaml

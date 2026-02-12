@@ -3,7 +3,8 @@
   "scripts": {
     "start": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "workflows.deploy.test": "act -W ./.github/workflows/deploy.yml --secret-file ./.github/.secrets.local"
   },
   "devDependencies": {
     "astro": "^5.17.1"

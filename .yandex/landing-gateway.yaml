@@ -1,0 +1,28 @@
+openapi: 3.0.0
+info:
+  title: Sample API
+  version: 1.0.0
+servers:
+  - url: https://d5dulh48dglpl0ifmef6.akta928u.apigw.yandexcloud.net
+  - url: https://italekseev.ru
+paths:
+  /:
+    get:
+      x-yc-apigateway-integration:
+        type: object_storage
+        bucket: ${BUCKET_NAME}
+        object: index.html
+        service_account_id: ${BUCKET_READER_SERVICE_ACCOUNT_ID}
+  /{file+}:
+    get:
+      parameters:
+        - name: file
+          in: path
+          required: true
+          schema:
+            type: string
+      x-yc-apigateway-integration:
+        type: object_storage
+        bucket: ${BUCKET_NAME}
+        object: "{file}"
+        service_account_id: ${BUCKET_READER_SERVICE_ACCOUNT_ID}
