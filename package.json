@@ -8,5 +8,6 @@
   },
   "devDependencies": {
     "astro": "^5.17.1"
-  }
+  },
+  "version": "0.0.1"
 }
