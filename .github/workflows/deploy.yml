@@ -1,4 +1,4 @@
-name: Deploy to Yandex Object Storage
+name: Deploy landing
 
 on:
   push:
@@ -38,7 +38,7 @@ jobs:
       - name: Generate bucket name
         run: |
           TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-          BUCKET_NAME="myapp-${TIMESTAMP}-${{ github.run_id }}"
+          BUCKET_NAME="landing-${TIMESTAMP}-${{ github.run_id }}"
           echo "NEW_BUCKET=$BUCKET_NAME" >> $GITHUB_ENV
 
       - name: Create new bucket
@@ -67,6 +67,21 @@ jobs:
           files: |
             ./.yandex/landing-gateway.yaml
 
+      - name: get current API gateway specification
+        run: |
+          yc serverless api-gateway get-spec ${{secrets.YC_LANDING_API_GATEWAY_ID}} > current-landing-gateway.yml
+
+      - uses: jbutcher5/read-yaml@main
+        id: prev-bucket-id
+        with:
+          file: "./current-landing-gateway.yml"
+          key-path: '["paths", "/", "get", "x-yc-apigateway-integration", "bucket"]'
+
       - name: update API gateway
         run: |
           yc serverless api-gateway update --id ${{secrets.YC_LANDING_API_GATEWAY_ID}} --spec=./.yandex/landing-gateway.yaml
+
+      - name: Delete bucket with prev version
+        run: |
+          yc storage s3 rm s3://${{ steps.prev-bucket-id.outputs.data }}/ --recursive
+          yc storage bucket delete --name ${{ steps.prev-bucket-id.outputs.data }}
