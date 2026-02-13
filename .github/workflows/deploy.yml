@@ -76,12 +76,14 @@ jobs:
         with:
           file: "./current-landing-gateway.yml"
           key-path: '["paths", "/", "get", "x-yc-apigateway-integration", "bucket"]'
+        continue-on-error: true
 
       - name: update API gateway
         run: |
           yc serverless api-gateway update --id ${{secrets.YC_LANDING_API_GATEWAY_ID}} --spec=./.yandex/landing-gateway.yaml
 
       - name: Delete bucket with prev version
+        if: steps.prev-bucket-id.outputs.data != ''
         run: |
           yc storage s3 rm s3://${{ steps.prev-bucket-id.outputs.data }}/ --recursive
           yc storage bucket delete --name ${{ steps.prev-bucket-id.outputs.data }}
