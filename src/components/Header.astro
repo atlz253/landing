@@ -1,0 +1,64 @@
+---
+import Link from "./Link.astro";
+---
+
+<style>
+  .header {
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8) var(--space-12);
+    background-color: var(--color-white);
+    box-shadow: var(--box-shadow);
+    position: sticky;
+    z-index: var(--z-index-5);
+    width: 100%;
+  }
+
+  .nav-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  .nav {
+    display: flex;
+    gap: var(--space-8);
+    justify-content: center;
+    align-items: center;
+  }
+
+  .nav-link {
+    text-decoration: none;
+    color: var(--color-grey-8);
+    font-weight: 500;
+    padding: var(--space-4) var(--space-6);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .nav-link:hover {
+    color: var(--color-blue-5);
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  .nav-link.active {
+    color: var(--color-blue-5);
+    font-weight: bold;
+  }
+</style>
+
+<header class="header">
+  <div class="nav-container">
+    <nav class="nav">
+      <Link href="/" class="nav-link">Главная</Link>
+      <Link href="/music" class="nav-link">Музыка</Link>
+      <Link
+        href="https://my-digital-garden-sand-delta.vercel.app/"
+        class="nav-link">База знаний</Link
+      >
+    </nav>
+  </div>
+</header>
