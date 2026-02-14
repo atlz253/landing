@@ -1,6 +1,10 @@
 ---
 import Layout from "../components/Layout.astro";
 import Head from "../components/Head.astro";
+import { getCollection } from "astro:content";
+import NewsCard from "../features/viewNews/components/NewsCard/index.astro";
+
+const musicNews = await getCollection("musicNews");
 ---
 
 <html lang="ru">
@@ -9,9 +13,6 @@ import Head from "../components/Head.astro";
     <title>Музыка - Федор Алексеев</title>
   </head>
   <Layout>
-    <main style="padding: var(--space-12); text-align: center;">
-      <h1>Музыка</h1>
-      <p>Страница с музыкой находится в разработке.</p>
-    </main>
+    {musicNews.map((n) => <NewsCard>{n.data.title}</NewsCard>)}
   </Layout>
 </html>
