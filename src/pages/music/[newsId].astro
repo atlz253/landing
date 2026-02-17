@@ -1,0 +1,52 @@
+---
+import Layout from "../../components/Layout.astro";
+import Head from "../../components/Head.astro";
+import { getCollection, render } from "astro:content";
+import Image from "astro/components/Image.astro";
+import type { News } from "../../features/viewNews/schemas";
+import YandexCloudVideo from "../../integrations/yandexCloud/cloudVideo/components/YandexCloudVideo.astro";
+import { getMusicNewsImage } from "../../features/viewNews/collections/musicNews/getMusicNewsImage";
+
+const { newsId } = Astro.params;
+
+export async function getStaticPaths() {
+  const newsCollection = await getCollection("musicNews");
+
+  return newsCollection.map(({ id }) => ({
+    params: { newsId: id },
+  }));
+}
+
+const news = (await getCollection("musicNews")).find((n) => n.id === newsId);
+
+if (!news) {
+  return Astro.redirect("/404");
+}
+
+const newsData: News = news.data;
+const { Content } = await render(news);
+---
+
+<html lang="ru">
+  <head>
+    <Head title={newsData.title} />
+  </head>
+  <Layout>
+    <h1>{newsData.title}</h1>
+
+    {
+      newsData.images && (
+        <Image
+          src={getMusicNewsImage(newsData.images[0])}
+          alt={newsData.title}
+          width={500}
+          height={350}
+        />
+      )
+    }
+
+    {newsData.videos && <YandexCloudVideo src={newsData.videos[0]} />}
+
+    <Content />
+  </Layout>
+</html>

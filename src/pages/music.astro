@@ -4,15 +4,16 @@ import Head from "../components/Head.astro";
 import { getCollection } from "astro:content";
 import NewsCard from "../features/viewNews/components/NewsCard/index.astro";
 
-const musicNews = await getCollection("musicNews");
+const musicNews = (await getCollection("musicNews")).sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
+);
 ---
 
 <html lang="ru">
   <head>
-    <Head />
-    <title>Музыка - Федор Алексеев</title>
+    <Head title="Музыка" />
   </head>
   <Layout>
-    {musicNews.map((n) => <NewsCard>{n.data.title}</NewsCard>)}
+    {musicNews.map((n) => <NewsCard news={n} />)}
   </Layout>
 </html>

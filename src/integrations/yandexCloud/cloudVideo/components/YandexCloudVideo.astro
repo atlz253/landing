@@ -1,0 +1,19 @@
+---
+interface Props {
+  src: string;
+  width?: number;
+  height?: number;
+  [key: string]: unknown;
+}
+
+const { src, width, height, ...rest } = Astro.props;
+---
+
+<iframe
+  width={width ?? 560}
+  height={height ?? 315}
+  src={src}
+  allow="autoplay; fullscreen; accelerometer; gyroscope; picture-in-picture; encrypted-media"
+  frameborder="0"
+  scrolling="no"
+  {...rest}></iframe>

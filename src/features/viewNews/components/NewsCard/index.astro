@@ -1,5 +1,90 @@
 ---
-import Card from "../../../../components/Card.astro";
+import Image from "astro/components/Image.astro";
+import type { CollectionEntry } from "astro:content";
+import YandexCloudVideo from "../../../../integrations/yandexCloud/cloudVideo/components/YandexCloudVideo.astro";
+import { getNewsCardType } from "./utils";
+import { getMusicNewsImage } from "../../collections/musicNews/getMusicNewsImage";
+
+interface Props {
+  news: CollectionEntry<"musicNews">;
+}
+
+const { news } = Astro.props;
+
+const newsData = news.data;
+const newsCardType = getNewsCardType(newsData);
 ---
 
-<Card><slot /></Card>
+<style>
+  .news {
+    display: flex;
+    width: fit-content;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    border: 1px solid var(--color-grey-3);
+    border-radius: var(--space-8);
+    background-color: var(--color-grey-1);
+    transition: all 0.2s ease;
+  }
+
+  .news:hover {
+    border-color: var(--color-blue-4);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .news__title {
+    font-size: var(--font-size-4);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  .news__image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: var(--space-4);
+    background-color: var(--color-grey-3);
+  }
+
+  .news__video {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background-color: var(--color-grey-3);
+    border-radius: var(--space-4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-2);
+  }
+
+  .news__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+</style>
+
+<div class="news">
+  <div class="news__content">
+    {
+      newsCardType === "images" && newsData.images && newsData.images[0] && (
+        <Image
+          src={getMusicNewsImage(newsData.images[0])}
+          alt={newsData.title}
+          class="news__image"
+        />
+      )
+    }
+    {
+      newsCardType === "videos" && newsData.videos && newsData.videos[0] && (
+        <YandexCloudVideo class="news__video" src={newsData.videos[0]} />
+      )
+    }
+    <h2 class="news__title">{newsData.title}</h2>
+    <span>{new Date(newsData.date).toLocaleDateString()}</span>
+    <a href={`/music/${news.id}`}>Подробнее</a>
+  </div>
+</div>
