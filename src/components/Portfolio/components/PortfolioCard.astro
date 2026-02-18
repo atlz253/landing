@@ -14,7 +14,7 @@ const { href, title, class: className, gridArea, ...rest } = Astro.props;
 <style>
   .portfolioCard {
     height: 100%;
-    transition: background-color 0.3s linear;
+    transition: background-color var(--transition-duration-2) linear;
   }
 
   a > .portfolioCard:hover {
