@@ -14,6 +14,16 @@ const musicNews = (await getCollection("musicNews")).sort(
     <Head title="Музыка" />
   </head>
   <Layout>
-    {musicNews.map((n) => <NewsCard news={n} />)}
+    <div id="musicNews">
+      {musicNews.map((n) => <NewsCard news={n} />)}
+    </div>
   </Layout>
 </html>
+
+<script>
+  import { autoUpdate, gap, meowsonry } from "meowsonry-layout";
+
+  const container = document.querySelector("#musicNews") as HTMLElement;
+
+  autoUpdate(container, () => meowsonry({ container, middleware: [gap(8)] }));
+</script>
