@@ -11,14 +11,22 @@ import Footer from "./Footer.astro";
     gap: var(--space-12);
     flex-direction: column;
   }
+
+  .layout {
+    display: grid;
+    min-height: calc(100vh - var(--space-2));
+    grid-template-rows: auto 1fr auto;
+  }
 </style>
 
 <body>
-  <Header />
-  <main class="main">
-    <slot />
-  </main>
+  <div class="layout">
+    <Header />
+    <main class="main">
+      <slot />
+    </main>
+    <Footer />
+  </div>
   <Fireworks />
   <YandexMetrikaCounter />
-  <Footer />
 </body>
