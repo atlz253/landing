@@ -8,8 +8,10 @@
     "workflows.deploy.test": "act -W ./.github/workflows/deploy.yml --secret-file ./.github/.secrets.local"
   },
   "devDependencies": {
+    "@astrojs/react": "^5.0.0",
     "@types/node": "^25.2.3",
-    "astro": "^5.17.1"
+    "astro": "^5.17.1",
+    "astrobook": "^0.12.3"
   },
   "dependencies": {
     "meowsonry-layout": "^0.0.0"

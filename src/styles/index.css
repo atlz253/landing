@@ -1,16 +1,15 @@
----
+@layer ui;
+@import "./button.css";
 
----
-
-<style is:global>
+@layer ui {
   :root {
     /* Шкала отступов для согласованного расположения и заполнения */
-    --space-2: 2px;
-    --space-4: 4px;
-    --space-6: 6px;
-    --space-8: 8px;
-    --space-10: 10px;
-    --space-12: 12px;
+    --space-1: 2px;
+    --space-2: 4px;
+    --space-3: 6px;
+    --space-4: 8px;
+    --space-5: 10px;
+    --space-6: 12px;
 
     /* Основная цветовая палитра */
     --color-white: #fdfdff;
@@ -81,6 +80,14 @@
     --transition-duration-1: 75ms;
     --transition-duration-2: 150ms;
     --transition-duration-3: 300ms;
+
+    /* Разновидность шрифтов */
+    --font-family-sans: "IBM Plex Sans", sans-serif;
+
+    /* Размер шрифта */
+    --font-size-1: 12px;
+    --font-size-2: 14px;
+    --font-size-3: 16px;
   }
 
   body,
@@ -97,18 +104,24 @@
   }
 
   body,
-  a {
+  a,
+  small {
     color: var(--color-black);
   }
 
-  body {
+  body,
+  button {
     line-height: 1;
+    font-size: var(--font-size-3);
+    font-family: var(--font-family-sans);
+  }
+
+  body {
     background-color: var(--color-white);
-    font-family: "IBM Plex Sans", sans-serif;
   }
 
   main {
-    padding: var(--space-8);
+    padding: var(--space-4);
   }
 
   ul {
@@ -117,11 +130,15 @@
   }
 
   pre {
-    padding: var(--space-8);
-    border-radius: var(--space-6);
+    padding: var(--space-4);
+    border-radius: var(--space-3);
   }
 
   a {
     text-decoration: none;
   }
-</style>
+
+  small {
+    font-size: var(--font-size-1);
+  }
+}

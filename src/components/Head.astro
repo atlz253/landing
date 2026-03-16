@@ -1,7 +1,7 @@
 ---
-import GlobalStyles from "./GlobalStyles/index.astro";
 import GoogleFonts from "./GoogleFonts.astro";
 import YandexMetrika from "./Yandex/YandexMetrika.astro";
+import "../styles/index.css";
 
 interface Props {
   title?: string;
@@ -21,4 +21,3 @@ const pageTitle = [title, "Федор Алексеев"].filter((p) => p).join("
 <title>{pageTitle}</title>
 <YandexMetrika />
 <GoogleFonts />
-<GlobalStyles />

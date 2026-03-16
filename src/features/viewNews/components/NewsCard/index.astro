@@ -4,6 +4,7 @@ import type { CollectionEntry } from "astro:content";
 import YandexCloudVideo from "../../../../integrations/yandexCloud/cloudVideo/components/YandexCloudVideo.astro";
 import { getNewsCardType } from "./utils";
 import { getMusicNewsImage } from "../../collections/musicNews/getMusicNewsImage";
+import ButtonLink from "../../../../ui/components/ButtonLink/index.astro";
 
 interface Props {
   news: CollectionEntry<"musicNews">;
@@ -20,10 +21,10 @@ const newsCardType = getNewsCardType(newsData);
     display: flex;
     width: fit-content;
     flex-direction: column;
-    gap: var(--space-4);
-    padding: var(--space-6);
+    gap: var(--space-2);
+    padding: var(--space-3);
     border: 1px solid var(--color-grey-3);
-    border-radius: var(--space-8);
+    border-radius: var(--space-4);
     background-color: var(--color-grey-1);
   }
 
@@ -38,7 +39,7 @@ const newsCardType = getNewsCardType(newsData);
     width: 100%;
     height: 200px;
     object-fit: cover;
-    border-radius: var(--space-4);
+    border-radius: var(--space-2);
     background-color: var(--color-grey-3);
   }
 
@@ -46,7 +47,7 @@ const newsCardType = getNewsCardType(newsData);
     width: 100%;
     aspect-ratio: 16 / 9;
     background-color: var(--color-grey-3);
-    border-radius: var(--space-4);
+    border-radius: var(--space-2);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -54,10 +55,19 @@ const newsCardType = getNewsCardType(newsData);
     font-size: var(--font-size-2);
   }
 
-  .news__content {
+  .news__content,
+  .news__right {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    gap: var(--space-2);
+  }
+
+  .news__right {
+    align-items: end;
+  }
+
+  .news__link {
+    width: fit-content;
   }
 </style>
 
@@ -78,7 +88,11 @@ const newsCardType = getNewsCardType(newsData);
       )
     }
     <h2 class="news__title">{newsData.title}</h2>
-    <span>{new Date(newsData.date).toLocaleDateString()}</span>
-    <a href={`/music/${news.id}`}>Подробнее</a>
+    <div class="news__right">
+      <ButtonLink href={`/music/${news.id}`} class="news__link"
+        >Подробнее</ButtonLink
+      >
+      <small>{new Date(newsData.date).toLocaleDateString()}</small>
+    </div>
   </div>
 </div>
