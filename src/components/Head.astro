@@ -2,6 +2,7 @@
 import GoogleFonts from "./GoogleFonts.astro";
 import YandexMetrika from "./Yandex/YandexMetrika.astro";
 import "../styles/index.css";
+import { ClientRouter } from "astro:transitions";
 
 interface Props {
   title?: string;
@@ -21,3 +22,4 @@ const pageTitle = [title, "Федор Алексеев"].filter((p) => p).join("
 <title>{pageTitle}</title>
 <YandexMetrika />
 <GoogleFonts />
+<ClientRouter />

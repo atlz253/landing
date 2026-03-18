@@ -23,11 +23,17 @@ const musicNews = (await getCollection("musicNews")).sort(
 <script>
   import { autoUpdate, gap, meowsonry } from "meowsonry-layout";
 
-  const container = document.querySelector("#musicNews") as HTMLElement;
+  let cancelUpdate: undefined | (() => void);
 
-  autoUpdate(container, () => {
-    container.style.opacity = "0";
-    meowsonry({ container, middleware: [gap(8)] });
-    container.style.opacity = "";
+  document.addEventListener("astro:page-load", () => {
+    const container = document.querySelector("#musicNews") as HTMLElement;
+    if (!container) return;
+    cancelUpdate = autoUpdate(container, () => {
+      container.style.opacity = "0";
+      meowsonry({ container, middleware: [gap(8)] });
+      container.style.opacity = "";
+    });
   });
+
+  document.addEventListener("astro:before-preparation", () => cancelUpdate?.());
 </script>
