@@ -13,6 +13,46 @@ paths:
         bucket: ${BUCKET_NAME}
         object: index.html
         service_account_id: ${BUCKET_READER_SERVICE_ACCOUNT_ID}
+  /music:
+    get:
+      x-yc-apigateway-integration:
+        type: object_storage
+        bucket: ${BUCKET_NAME}
+        object: music/index.html
+        service_account_id: ${BUCKET_READER_SERVICE_ACCOUNT_ID}
+  /music/{news}:
+    get:
+      parameters:
+        - name: news
+          in: path
+          required: true
+          schema:
+            type: string
+      x-yc-apigateway-integration:
+        type: object_storage
+        bucket: ${BUCKET_NAME}
+        object: music/{news}/index.html
+        service_account_id: ${BUCKET_READER_SERVICE_ACCOUNT_ID}
+  /astrobook:
+    get:
+      x-yc-apigateway-integration:
+        type: object_storage
+        bucket: ${BUCKET_NAME}
+        object: astrobook/index.html
+        service_account_id: ${BUCKET_READER_SERVICE_ACCOUNT_ID}
+  /astrobook/{path+}:
+    get:
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+      x-yc-apigateway-integration:
+        type: object_storage
+        bucket: ${BUCKET_NAME}
+        object: astrobook/{path}/index.html
+        service_account_id: ${BUCKET_READER_SERVICE_ACCOUNT_ID}
   /{file+}:
     get:
       parameters:
