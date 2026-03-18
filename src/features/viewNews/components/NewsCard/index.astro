@@ -2,7 +2,7 @@
 import Image from "astro/components/Image.astro";
 import type { CollectionEntry } from "astro:content";
 import YandexCloudVideo from "../../../../integrations/yandexCloud/cloudVideo/components/YandexCloudVideo.astro";
-import { getNewsCardType } from "./utils";
+import { getNewsCardPreviewType } from "./utils";
 import { getMusicNewsImage } from "../../collections/musicNews/getMusicNewsImage";
 import ButtonLink from "../../../../ui/components/ButtonLink/index.astro";
 
@@ -13,7 +13,7 @@ interface Props {
 const { news } = Astro.props;
 
 const newsData = news.data;
-const newsCardType = getNewsCardType(newsData);
+const newsCardType = getNewsCardPreviewType(newsData);
 ---
 
 <style>
@@ -83,9 +83,16 @@ const newsCardType = getNewsCardType(newsData);
       )
     }
     {
-      newsCardType === "videos" && newsData.videos && newsData.videos[0] && (
-        <YandexCloudVideo class="news__video" src={newsData.videos[0]} />
-      )
+      newsCardType === "yandexVideos" &&
+        newsData.yandexVideos &&
+        newsData.yandexVideos[0] && (
+          <YandexCloudVideo
+            class="news__video"
+            src={newsData.yandexVideos[0]}
+            autoplay
+            mute
+          />
+        )
     }
     <h2 class="news__title">{newsData.title}</h2>
     <div class="news__right">

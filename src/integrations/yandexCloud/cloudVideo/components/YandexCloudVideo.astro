@@ -3,16 +3,23 @@ interface Props {
   src: string;
   width?: number;
   height?: number;
+  autoplay?: boolean;
+  mute?: boolean;
   [key: string]: unknown;
 }
 
-const { src, width, height, ...rest } = Astro.props;
+const { src, width, height, autoplay, mute, ...rest } = Astro.props;
+
+const videoURL = new URL(src);
+
+videoURL.searchParams.set("autoplay", autoplay ? "1" : "0");
+videoURL.searchParams.set("mute", mute ? "1" : "0");
 ---
 
 <iframe
   width={width ?? 560}
   height={height ?? 315}
-  src={src}
+  src={videoURL.href}
   allow="autoplay; fullscreen; accelerometer; gyroscope; picture-in-picture; encrypted-media"
   frameborder="0"
   scrolling="no"

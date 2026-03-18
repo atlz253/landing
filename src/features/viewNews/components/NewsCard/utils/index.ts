@@ -1,1 +1,1 @@
-export * from "./getNewsCardType";
+export * from "./getNewsCardPreviewType";

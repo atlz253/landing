@@ -6,6 +6,7 @@ import Image from "astro/components/Image.astro";
 import type { News } from "../../features/viewNews/schemas";
 import YandexCloudVideo from "../../integrations/yandexCloud/cloudVideo/components/YandexCloudVideo.astro";
 import { getMusicNewsImage } from "../../features/viewNews/collections/musicNews/getMusicNewsImage";
+import VKVideo from "../../integrations/vk/components/VKVideo.astro";
 
 const { newsId } = Astro.params;
 
@@ -24,29 +25,92 @@ if (!news) {
 }
 
 const newsData: News = news.data;
+console.log(newsData);
+
 const { Content } = await render(news);
 ---
+
+<style>
+  .contentWrapper {
+    display: flex;
+    justify-content: center;
+  }
+
+  .content {
+    width: 100%;
+    max-width: var(--content-width-max);
+  }
+
+  .content :global(details) {
+    padding: var(--space-3);
+    border-radius: var(--space-4);
+    border: 1px solid var(--color-grey-8);
+  }
+
+  .content :global(summary) {
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .content :global(summary::marker) {
+    color: var(--color-grey-8);
+  }
+
+  .content :global(p + p) {
+    margin-top: var(--space-4);
+  }
+
+  .images,
+  .videos {
+    width: 98vw;
+    display: flex;
+    overflow-y: auto;
+    gap: var(--space-4);
+  }
+</style>
 
 <html lang="ru">
   <head>
     <Head title={newsData.title} />
   </head>
   <Layout>
-    <h1>{newsData.title}</h1>
-
+    <div class="contentWrapper">
+      <div class="content">
+        <h1>{newsData.title}</h1>
+        <Content />
+      </div>
+    </div>
     {
       newsData.images && (
-        <Image
-          src={getMusicNewsImage(newsData.images[0])}
-          alt={newsData.title}
-          width={500}
-          height={350}
-        />
+        <>
+          <h2>Фото</h2>
+          <div class="images">
+            {newsData.images.map((i) => (
+              <Image
+                src={getMusicNewsImage(i)}
+                alt={newsData.title}
+                height={300}
+              />
+            ))}
+          </div>
+        </>
       )
     }
-
-    {newsData.videos && <YandexCloudVideo src={newsData.videos[0]} />}
-
-    <Content />
+    {
+      (newsData.yandexVideos || newsData.vkVideos) && (
+        <>
+          <h2>Видео</h2>
+          <div class="videos">
+            {newsData.yandexVideos?.map((v) => (
+              <YandexCloudVideo src={v} height={300} width={500} />
+            ))}
+            {newsData.vkVideos?.map((v) => (
+              <VKVideo src={v} height={300} width={500} />
+            ))}
+          </div>
+        </>
+      )
+    }
+    <small>{newsData.date.toLocaleDateString()}</small>
   </Layout>
 </html>

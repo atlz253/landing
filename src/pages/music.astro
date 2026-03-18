@@ -25,5 +25,9 @@ const musicNews = (await getCollection("musicNews")).sort(
 
   const container = document.querySelector("#musicNews") as HTMLElement;
 
-  autoUpdate(container, () => meowsonry({ container, middleware: [gap(8)] }));
+  autoUpdate(container, () => {
+    container.style.opacity = "0";
+    meowsonry({ container, middleware: [gap(8)] });
+    container.style.opacity = "";
+  });
 </script>

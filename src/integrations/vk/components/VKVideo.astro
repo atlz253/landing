@@ -1,0 +1,24 @@
+---
+interface Props {
+  src: string;
+  width?: number;
+  height?: number;
+  autoplay?: boolean;
+  [key: string]: unknown;
+}
+
+const { src, width, height, autoplay, ...rest } = Astro.props;
+
+const videoURL = new URL(src);
+
+videoURL.searchParams.set("autoplay", autoplay ? "1" : "0");
+---
+
+<iframe
+  src={videoURL.href}
+  width={width ?? 853}
+  height={height ?? 480}
+  style="background-color: #000"
+  allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock;"
+  frameborder="0"
+  allowfullscreen></iframe>

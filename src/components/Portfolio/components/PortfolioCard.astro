@@ -17,6 +17,15 @@ const { href, title, class: className, gridArea, ...rest } = Astro.props;
     transition: background-color var(--transition-duration-2) linear;
   }
 
+  .portfolioCard :global(ul) {
+    list-style: none;
+    padding-inline-start: 0;
+  }
+
+  a {
+    color: var(--color-black);
+  }
+
   a > .portfolioCard:hover {
     background-color: var(--color-grey-2);
   }
