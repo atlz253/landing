@@ -14,6 +14,6 @@
     "astrobook": "^0.12.3"
   },
   "dependencies": {
-    "meowsonry-layout": "^0.0.0"
+    "meowsonry-layout": "^0.0.1"
   }
 }
