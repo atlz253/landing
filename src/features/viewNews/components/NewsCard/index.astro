@@ -99,7 +99,7 @@ const newsCardType = getNewsCardPreviewType(newsData);
       <ButtonLink href={`/music/${news.id}`} class="news__link"
         >Подробнее</ButtonLink
       >
-      <small>{new Date(newsData.date).toLocaleDateString()}</small>
+      <small>{new Date(newsData.date).toLocaleDateString("ru-RU")}</small>
     </div>
   </div>
 </div>
