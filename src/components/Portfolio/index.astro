@@ -1,48 +1,51 @@
 ---
 import userverPNGImage from "./assets/userver.png";
-import userverWEBPImage from "./assets/userver.webp";
 import gameWatchPNGImage from "./assets/gameWatch.png";
-import gameWatchWEBPImage from "./assets/gameWatch.webp";
 import { Code } from "astro:components";
+import Image from "astro/components/Image.astro";
 import PortfolioCard from "./components/PortfolioCard.astro";
 import List from "../List.astro";
 import Link from "../Link.astro";
 import PrettyParagraph from "../PrettyParagraph.astro";
-import { url } from "../../utils/css";
-
-const userverImageURLs = [
-  url(userverWEBPImage.src),
-  url(userverPNGImage.src),
-].join(",");
-const gameWatchImageURLs = [
-  url(gameWatchWEBPImage.src),
-  url(gameWatchPNGImage.src),
-].join(",");
 ---
 
-<style define:vars={{ userverImageURLs, gameWatchImageURLs }}>
+<style>
   #portfolio {
-    display: grid;
-    gap: var(--space-6);
-    grid-template-areas:
-      "userver"
-      "tests"
-      "frontier"
-      "rondo"
-      "bent"
-      "courses"
-      "meowsonry"
-      "landing";
+    --portfolio-gap: var(--space-6);
+    width: 100%;
+    visibility: hidden;
   }
 
-  .tile_userver,
-  .tile_tests {
-    background-size: cover;
-    background-repeat: no-repeat;
+  .tile {
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .tile[data-meowsonry-prevent-flick] {
+    animation: meowsonry-fade-in var(--transition-duration-3) ease both;
+    animation-delay: calc(var(--meowsonry-index) * 24ms);
+  }
+
+  @keyframes meowsonry-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .rondoCode {
     display: none;
+  }
+
+  :global(.portfolioImage) {
+    width: 100%;
+    height: auto;
+    border-radius: var(--space-3);
   }
 
   @media (min-width: 432px) {
@@ -51,23 +54,21 @@ const gameWatchImageURLs = [
     }
   }
 
+  @media (min-width: 720px) {
+    .tile {
+      width: calc((100% - var(--portfolio-gap)) / 2);
+    }
+  }
+
   @media (min-width: 1440px) {
-    #portfolio {
-      grid-template-areas:
-        "userver tests tests"
-        "userver frontier frontier"
-        "rondo bent courses"
-        "meowsonry landing  .";
+    .tile {
+      width: calc((100% - var(--portfolio-gap) * 3) / 3);
     }
+  }
 
-    .tile_tests {
-      min-height: 300px;
-      background-image: var(--gameWatchImageURLs);
-    }
-
-    .tile_userver {
-      min-height: 370px;
-      background-image: var(--userverImageURLs);
+  @media (min-width: 1680px) {
+    .tile {
+      width: calc((100% - var(--portfolio-gap) * 4) / 4);
     }
   }
 </style>
@@ -78,23 +79,37 @@ const gameWatchImageURLs = [
       {
         href: "https://userver.tech/",
         title: "Сайт документации userver",
-        gridArea: "userver",
+        slug: "userver",
         children: (
-          <List>
-            <li>- Верстка новой стартовой страницы</li>
-            <li>- Улучшение дизайна сайта</li>
-          </List>
+          <>
+            <Image
+              src={userverPNGImage}
+              alt="Скриншот сайта документации userver"
+              class="portfolioImage"
+            />
+            <List>
+              <li>- Верстка новой стартовой страницы</li>
+              <li>- Улучшение дизайна сайта</li>
+            </List>
+          </>
         ),
       },
       {
         href: "https://github.com/atlz253/Frontend-test-solutions",
         title: "Выполненные тестовые задания по frontend",
-        gridArea: "tests",
+        slug: "tests",
+        children: (
+          <Image
+            src={gameWatchPNGImage}
+            alt="Скриншот тестового задания Game & Watch"
+            class="portfolioImage"
+          />
+        ),
       },
       {
         href: "https://github.com/atlz253/frontier",
         title: "Frontier",
-        gridArea: "frontier",
+        slug: "frontier",
         children: (
           <PrettyParagraph>
             JavaScript библиотека, которая помогает собирать модули системы без
@@ -105,7 +120,7 @@ const gameWatchImageURLs = [
       {
         href: "https://github.com/atlz253/Bent",
         title: "Bent code",
-        gridArea: "bent",
+        slug: "bent",
         children: (
           <>
             <PrettyParagraph>
@@ -135,7 +150,7 @@ while(i <= count)
       {
         href: "https://github.com/atlz253/Rondo-neuronet-project",
         title: "Rondo neuronet project",
-        gridArea: "rondo",
+        slug: "rondo",
         children: (
           <>
             <PrettyParagraph>
@@ -163,7 +178,7 @@ while(i <= count)
       {
         href: "https://github.com/atlz253/meowsonry",
         title: "Meowsonry",
-        gridArea: "meowsonry",
+        slug: "meowsonry",
         children: (
           <>
             <PrettyParagraph>
@@ -179,7 +194,7 @@ while(i <= count)
       },
       {
         title: "Повышение квалификации",
-        gridArea: "courses",
+        slug: "courses",
         children: (
           <List>
             <li>
@@ -199,7 +214,7 @@ while(i <= count)
       },
       {
         title: "Этот сайт :)",
-        gridArea: "landing",
+        slug: "landing",
         children: (
           <List>
             <li>
@@ -212,15 +227,32 @@ while(i <= count)
           </List>
         ),
       },
-    ].map(({ href, title, gridArea, children }) => (
+    ].map(({ href, title, slug, children }) => (
       <PortfolioCard
         href={href}
         title={title}
-        class:list={["tile", "tile_" + gridArea]}
-        gridArea={gridArea}
+        class:list={["tile", "tile_" + slug]}
       >
         {children}
       </PortfolioCard>
     ))
   }
 </section>
+
+<script>
+  import { autoUpdate, gap, meowsonry, preventFlick } from "meowsonry-layout";
+
+  let cancelUpdate: undefined | (() => void);
+
+  document.addEventListener("astro:page-load", () => {
+    const container = document.querySelector("#portfolio") as HTMLElement;
+    if (!container) return;
+
+    cancelUpdate?.();
+    cancelUpdate = autoUpdate(container, () =>
+      meowsonry({ container, middleware: [preventFlick(), gap(12)] }),
+    );
+  });
+
+  document.addEventListener("astro:before-preparation", () => cancelUpdate?.());
+</script>

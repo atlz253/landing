@@ -4,11 +4,10 @@ import Card from "../../Card.astro";
 interface Props {
   href?: string;
   title: string;
-  gridArea: string;
   [key: string]: unknown;
 }
 
-const { href, title, class: className, gridArea, ...rest } = Astro.props;
+const { href, title, class: className, ...rest } = Astro.props;
 ---
 
 <style>
@@ -22,31 +21,30 @@ const { href, title, class: className, gridArea, ...rest } = Astro.props;
     padding-inline-start: 0;
   }
 
-  a {
+  .portfolioCardWrapper {
+    display: block;
     color: var(--color-black);
   }
 
-  a > .portfolioCard:hover {
+  .portfolioCardWrapper > .portfolioCard:hover {
     background-color: var(--color-grey-2);
   }
 </style>
 
 {
   href ? (
-    <a style={gridArea ? `grid-area: ${gridArea}` : ""} href={href}>
-      <Card class:list={["portfolioCard", className]} {...rest}>
+    <a class:list={["portfolioCardWrapper", className]} href={href} {...rest}>
+      <Card class="portfolioCard">
         <h2>{title}</h2>
         <slot />
       </Card>
     </a>
   ) : (
-    <Card
-      class:list={["portfolioCard", className]}
-      style={gridArea ? `grid-area: ${gridArea}` : ""}
-      {...rest}
-    >
-      <h2>{title}</h2>
-      <slot />
-    </Card>
+    <div class:list={["portfolioCardWrapper", className]} {...rest}>
+      <Card class="portfolioCard">
+        <h2>{title}</h2>
+        <slot />
+      </Card>
+    </div>
   )
 }
