@@ -3,6 +3,7 @@ import GoogleFonts from "./GoogleFonts.astro";
 import YandexMetrika from "./Yandex/YandexMetrika.astro";
 import "../styles/index.css";
 import { ClientRouter } from "astro:transitions";
+import Favicon from "./Favicon/index.astro";
 
 interface Props {
   title?: string;
@@ -19,6 +20,7 @@ const pageTitle = [title, "Федор Алексеев"].filter((p) => p).join("
   name="description"
   content="Это сайт Федора Алексеева, на котором он рассказывает о себе"
 />
+<Favicon />
 <title>{pageTitle}</title>
 <YandexMetrika />
 <GoogleFonts />
