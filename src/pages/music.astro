@@ -14,25 +14,23 @@ const musicNews = (await getCollection("musicNews")).sort(
     <Head title="Музыка" />
   </head>
   <Layout>
-    <div id="musicNews">
+    <div id="musicNews" style="visibility: hidden;">
       {musicNews.map((n) => <NewsCard news={n} />)}
     </div>
   </Layout>
 </html>
 
 <script>
-  import { autoUpdate, gap, meowsonry } from "meowsonry-layout";
+  import { autoUpdate, gap, meowsonry, preventFlick } from "meowsonry-layout";
 
   let cancelUpdate: undefined | (() => void);
 
   document.addEventListener("astro:page-load", () => {
     const container = document.querySelector("#musicNews") as HTMLElement;
     if (!container) return;
-    cancelUpdate = autoUpdate(container, () => {
-      container.style.opacity = "0";
-      meowsonry({ container, middleware: [gap(8)] });
-      container.style.opacity = "";
-    });
+    cancelUpdate = autoUpdate(container, () =>
+      meowsonry({ container, middleware: [preventFlick(), gap(8)] }),
+    );
   });
 
   document.addEventListener("astro:before-preparation", () => cancelUpdate?.());

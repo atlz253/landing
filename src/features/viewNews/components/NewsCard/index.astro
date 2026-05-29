@@ -28,6 +28,23 @@ const newsCardType = getNewsCardPreviewType(newsData);
     background-color: var(--color-grey-1);
   }
 
+  .news[data-meowsonry-prevent-flick] {
+    animation: meowsonry-fade-in 220ms ease both;
+    animation-delay: calc(var(--meowsonry-index) * 24ms);
+  }
+
+  @keyframes meowsonry-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   .news__title {
     font-size: var(--font-size-4);
     font-weight: 600;
