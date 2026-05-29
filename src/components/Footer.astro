@@ -7,7 +7,21 @@ const version = data.version;
 const buildTime = new Date().toLocaleString("ru-RU");
 ---
 
-<footer>
+<style>
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    box-sizing: border-box;
+    width: 100%;
+    padding: var(--space-6) var(--space-8);
+    background-color: var(--color-grey-2);
+  }
+</style>
+
+<footer class="footer">
   <span>v{version}</span>
   <small>({buildTime})</small> | <a href="/astrobook">Astrobook</a>
 </footer>
