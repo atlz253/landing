@@ -1,0 +1,77 @@
+---
+import Layout from "../../components/Layout.astro";
+import Head from "../../components/Head.astro";
+import { getCollection, render } from "astro:content";
+import ButtonLink from "../../ui/components/ButtonLink/index.astro";
+
+const { projectId } = Astro.params;
+
+export async function getStaticPaths() {
+  const projects = await getCollection("portfolio");
+
+  return projects
+    .filter((project) => project.body?.trim())
+    .map(({ id }) => ({
+      params: { projectId: id },
+    }));
+}
+
+const project = (await getCollection("portfolio")).find(
+  (p) => p.id === projectId && p.body?.trim(),
+);
+
+if (!project) {
+  return Astro.redirect("/404");
+}
+
+const { Content } = await render(project);
+---
+
+<style>
+  .contentWrapper {
+    display: flex;
+    justify-content: center;
+  }
+
+  .content {
+    display: flex;
+    width: 100%;
+    max-width: var(--content-width-max);
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .projectImage {
+    width: 100%;
+    max-width: 960px;
+    height: auto;
+    border-radius: var(--space-4);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+</style>
+
+<html lang="ru">
+  <head>
+    <Head title={project.data.title} />
+  </head>
+  <Layout>
+    <div class="contentWrapper">
+      <article class="content">
+        <h1>{project.data.title}</h1>
+        <Content />
+        {
+          project.data.href && (
+            <div class="actions">
+              <ButtonLink href={project.data.href}>Открыть проект</ButtonLink>
+            </div>
+          )
+        }
+      </article>
+    </div>
+  </Layout>
+</html>

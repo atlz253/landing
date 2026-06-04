@@ -185,4 +185,8 @@
     font-size: var(--font-size-1);
     line-height: var(--font-size-1-line-height);
   }
+
+  iframe {
+    border: unset;
+  }
 }

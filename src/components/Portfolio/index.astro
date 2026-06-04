@@ -1,12 +1,10 @@
 ---
-import userverPNGImage from "./assets/userver.png";
-import gameWatchPNGImage from "./assets/gameWatch.png";
-import { Code } from "astro:components";
-import Image from "astro/components/Image.astro";
+import { getCollection } from "astro:content";
 import PortfolioCard from "./components/PortfolioCard.astro";
-import List from "../List.astro";
-import Link from "../Link.astro";
-import PrettyParagraph from "../PrettyParagraph.astro";
+
+const projects = (await getCollection("portfolio")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
 ---
 
 <style>
@@ -38,22 +36,6 @@ import PrettyParagraph from "../PrettyParagraph.astro";
     }
   }
 
-  .rondoCode {
-    display: none;
-  }
-
-  :global(.portfolioImage) {
-    width: 100%;
-    height: auto;
-    border-radius: var(--space-3);
-  }
-
-  @media (min-width: 432px) {
-    .rondoCode {
-      display: block;
-    }
-  }
-
   @media (min-width: 720px) {
     .tile {
       width: calc((100% - var(--portfolio-gap)) / 2);
@@ -75,166 +57,11 @@ import PrettyParagraph from "../PrettyParagraph.astro";
 
 <section id="portfolio">
   {
-    [
-      {
-        href: "https://userver.tech/",
-        title: "Сайт документации userver",
-        slug: "userver",
-        children: (
-          <>
-            <Image
-              src={userverPNGImage}
-              alt="Скриншот сайта документации userver"
-              class="portfolioImage"
-            />
-            <List>
-              <li>- Верстка новой стартовой страницы</li>
-              <li>- Улучшение дизайна сайта</li>
-            </List>
-          </>
-        ),
-      },
-      {
-        href: "https://github.com/atlz253/Frontend-test-solutions",
-        title: "Выполненные тестовые задания по frontend",
-        slug: "tests",
-        children: (
-          <Image
-            src={gameWatchPNGImage}
-            alt="Скриншот тестового задания Game & Watch"
-            class="portfolioImage"
-          />
-        ),
-      },
-      {
-        href: "https://github.com/atlz253/frontier",
-        title: "Frontier",
-        slug: "frontier",
-        children: (
-          <PrettyParagraph>
-            JavaScript библиотека, которая помогает собирать модули системы без
-            нарушения их границ
-          </PrettyParagraph>
-        ),
-      },
-      {
-        href: "https://github.com/atlz253/Bent",
-        title: "Bent code",
-        slug: "bent",
-        children: (
-          <>
-            <PrettyParagraph>
-              Проект по созданию языка программирования и его транслятора на
-              основе flex и bison
-            </PrettyParagraph>
-            <Code
-              code={`print("Hello world!");
-
-i = 0;
-count = 100;
-
-while(i <= count)
-{
-  if (i / 2 != 0)
-  {
-    print(i);
-  }
-
-  i = i + 1;
-}`}
-              theme="github-light"
-            />
-          </>
-        ),
-      },
-      {
-        href: "https://github.com/atlz253/Rondo-neuronet-project",
-        title: "Rondo neuronet project",
-        slug: "rondo",
-        children: (
-          <>
-            <PrettyParagraph>
-              Комплект программного обеспечения для обучения и использования
-              нейронной сети по распознаванию символов ZX Spectrum,
-              разработанный мной с нуля
-            </PrettyParagraph>
-            <Code
-              code={`> ./build/spchar selections/clear/C.png --show-precentage
-Я думаю, что на изображении буква C
-Если подробнее, то вот что я думаю об этом изображении:
-Вероятность, что это буква C: 99.07%
-Вероятность, что это буква D: 0.14%
-Вероятность, что это буква O: 0.73%
-Вероятность, что это буква Q: 0.05%
-Вероятность, что это ни на что не похоже: 0.02%`}
-              lang="bash"
-              theme="github-light"
-              style="height: 100%"
-              class="rondoCode"
-            />
-          </>
-        ),
-      },
-      {
-        href: "https://github.com/atlz253/meowsonry",
-        title: "Meowsonry",
-        slug: "meowsonry",
-        children: (
-          <>
-            <PrettyParagraph>
-              Библиотека для построения masonry layout
-            </PrettyParagraph>
-            <PrettyParagraph>
-              Masonry layout используется для расстановки карточек как в
-              Pinterest, данный макет помогает показать как можно больше
-              контента, расставляя элементы по аналогии с брусчаткой
-            </PrettyParagraph>
-          </>
-        ),
-      },
-      {
-        title: "Повышение квалификации",
-        slug: "courses",
-        children: (
-          <List>
-            <li>
-              -{" "}
-              <Link href="https://certify.s3.yandex.net/young-yandex/84171cb4-693a-42ab-9988-9ffb7089049b/dcf3abad-17f5-4081-ba92-75e77f209b74.pdf">
-                Школа разработки интерфейсов Яндекс
-              </Link>
-            </li>
-            <li>
-              -{" "}
-              <Link href="https://www.freecodecamp.org/certification/atlz/javascript-algorithms-and-data-structures">
-                JavaScript Algorithms and Data Structures
-              </Link>
-            </li>
-          </List>
-        ),
-      },
-      {
-        title: "Этот сайт :)",
-        slug: "landing",
-        children: (
-          <List>
-            <li>
-              - frontend на <Link href="https://astro.build/">astro</Link>
-            </li>
-            <li>
-              - инфраструктура на{" "}
-              <Link href="https://cloud.yandex.ru/">Yandex.Cloud</Link>
-            </li>
-          </List>
-        ),
-      },
-    ].map(({ href, title, slug, children }) => (
+    projects.map((project) => (
       <PortfolioCard
-        href={href}
-        title={title}
-        class:list={["tile", "tile_" + slug]}
-      >
-        {children}
-      </PortfolioCard>
+        project={project}
+        class:list={["tile", "tile_" + project.id]}
+      />
     ))
   }
 </section>
@@ -244,15 +71,40 @@ while(i <= count)
 
   let cancelUpdate: undefined | (() => void);
 
+  const clearPortfolioLayout = (container: HTMLElement) => {
+    container.style.height = "";
+    container.style.position = "";
+
+    Array.from(container.children).forEach((child) => {
+      if (!(child instanceof HTMLElement)) return;
+
+      Object.assign(child.style, {
+        left: "",
+        position: "",
+        top: "",
+      });
+    });
+  };
+
   document.addEventListener("astro:page-load", () => {
     const container = document.querySelector("#portfolio") as HTMLElement;
     if (!container) return;
 
     cancelUpdate?.();
+    clearPortfolioLayout(container);
+
     cancelUpdate = autoUpdate(container, () =>
       meowsonry({ container, middleware: [preventFlick(), gap(12)] }),
     );
   });
 
-  document.addEventListener("astro:before-preparation", () => cancelUpdate?.());
+  document.addEventListener("astro:before-preparation", () => {
+    cancelUpdate?.();
+    cancelUpdate = undefined;
+
+    const container = document.querySelector("#portfolio") as HTMLElement;
+    if (container) {
+      clearPortfolioLayout(container);
+    }
+  });
 </script>

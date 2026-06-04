@@ -1,18 +1,42 @@
 ---
+import { Code } from "astro:components";
+import Image from "astro/components/Image.astro";
+import type { CollectionEntry } from "astro:content";
 import Card from "../../Card.astro";
+import List from "../../List.astro";
+import Link from "../../Link.astro";
+import PrettyParagraph from "../../PrettyParagraph.astro";
+import ButtonLink from "../../../ui/components/ButtonLink/index.astro";
+import { getPortfolioImage } from "../../../features/viewPortfolio/collections/portfolio/getPortfolioImage";
 
 interface Props {
-  href?: string;
-  title: string;
+  project: CollectionEntry<"portfolio">;
   [key: string]: unknown;
 }
 
-const { href, title, class: className, ...rest } = Astro.props;
+const { project, class: className, ...rest } = Astro.props;
+
+const normalizeDescription = (description: unknown) =>
+  Array.isArray(description)
+    ? description.filter((paragraph): paragraph is string => typeof paragraph === "string")
+    : typeof description === "string"
+      ? [description]
+      : [];
+
+const frontmatter = project.rendered?.metadata?.frontmatter as
+  | { description?: unknown }
+  | undefined;
+
+const description = normalizeDescription(
+  project.data.description ?? frontmatter?.description,
+);
+const actionHref = project.body?.trim()
+  ? `/portfolio/${project.id}`
+  : project.data.href;
 ---
 
 <style>
   .portfolioCard {
-    height: 100%;
     transition: background-color var(--transition-duration-2) linear;
   }
 
@@ -22,29 +46,76 @@ const { href, title, class: className, ...rest } = Astro.props;
   }
 
   .portfolioCardWrapper {
-    display: block;
+    display: flex;
+    flex-direction: column;
     color: var(--color-black);
   }
 
-  .portfolioCardWrapper > .portfolioCard:hover {
-    background-color: var(--color-grey-2);
+  .portfolioCard__actions {
+    align-self: flex-end;
+    display: flex;
+    margin-left: auto;
+    margin-top: auto;
+  }
+
+  .portfolioImage {
+    width: 100%;
+    height: auto;
+    border-radius: var(--space-3);
+  }
+
+  .rondoCode {
+    display: none;
+  }
+
+  @media (min-width: 432px) {
+    .rondoCode {
+      display: block;
+    }
   }
 </style>
 
-{
-  href ? (
-    <a class:list={["portfolioCardWrapper", className]} href={href} {...rest}>
-      <Card class="portfolioCard">
-        <h2>{title}</h2>
-        <slot />
-      </Card>
-    </a>
-  ) : (
-    <div class:list={["portfolioCardWrapper", className]} {...rest}>
-      <Card class="portfolioCard">
-        <h2>{title}</h2>
-        <slot />
-      </Card>
-    </div>
-  )
-}
+<div class:list={["portfolioCardWrapper", className]} {...rest}>
+  <Card class="portfolioCard">
+    <h2>{project.data.title}</h2>
+    {
+      project.data.image && (
+        <Image
+          src={getPortfolioImage(project.data.image)}
+          alt={project.data.imageAlt ?? project.data.title}
+          class="portfolioImage"
+        />
+      )
+    }
+    {description.map((paragraph) => <PrettyParagraph>{paragraph}</PrettyParagraph>)}
+    {
+      project.data.items && (
+        <List>
+          {project.data.items.map((item) => (
+            <li>
+              -{" "}
+              {item.href ? <Link href={item.href}>{item.text}</Link> : item.text}
+            </li>
+          ))}
+        </List>
+      )
+    }
+    {
+      project.data.code && (
+        <Code
+          code={project.data.code.value}
+          lang={project.data.code.lang}
+          theme="github-light"
+          class:list={[project.id === "rondo" && "rondoCode"]}
+        />
+      )
+    }
+    {
+      actionHref && (
+        <div class="portfolioCard__actions">
+          <ButtonLink href={actionHref}>Подробнее</ButtonLink>
+        </div>
+      )
+    }
+  </Card>
+</div>
