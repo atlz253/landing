@@ -33,6 +33,19 @@ paths:
         bucket: ${BUCKET_NAME}
         object: music/{news}/index.html
         service_account_id: ${BUCKET_READER_SERVICE_ACCOUNT_ID}
+  /portfolio/{project}:
+    get:
+      parameters:
+        - name: project
+          in: path
+          required: true
+          schema:
+            type: string
+      x-yc-apigateway-integration:
+        type: object_storage
+        bucket: ${BUCKET_NAME}
+        object: portfolio/{project}/index.html
+        service_account_id: ${BUCKET_READER_SERVICE_ACCOUNT_ID}
   /astrobook:
     get:
       x-yc-apigateway-integration:
