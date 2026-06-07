@@ -3,9 +3,16 @@ import Layout from "../components/Layout.astro";
 import Head from "../components/Head.astro";
 import { getCollection } from "astro:content";
 import NewsCard from "../features/viewNews/components/NewsCard/index.astro";
+import { getNewsCardPreviewType } from "../features/viewNews/components/NewsCard/utils";
 
 const musicNews = (await getCollection("musicNews")).sort(
   (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
+);
+const autoplayNewsIds = new Set(
+  musicNews
+    .filter((news) => getNewsCardPreviewType(news.data) === "yandexVideos")
+    .slice(0, 3)
+    .map((news) => news.id),
 );
 ---
 
@@ -15,7 +22,11 @@ const musicNews = (await getCollection("musicNews")).sort(
   </head>
   <Layout>
     <div id="musicNews" style="visibility: hidden;">
-      {musicNews.map((n) => <NewsCard news={n} />)}
+      {
+        musicNews.map((news) => (
+          <NewsCard news={news} autoplay={autoplayNewsIds.has(news.id)} />
+        ))
+      }
     </div>
   </Layout>
 </html>

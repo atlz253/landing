@@ -8,9 +8,10 @@ import ButtonLink from "../../../../ui/components/ButtonLink/index.astro";
 
 interface Props {
   news: CollectionEntry<"musicNews">;
+  autoplay?: boolean;
 }
 
-const { news } = Astro.props;
+const { news, autoplay = false } = Astro.props;
 
 const newsData = news.data;
 const newsCardType = getNewsCardPreviewType(newsData);
@@ -106,7 +107,7 @@ const newsCardType = getNewsCardPreviewType(newsData);
           <YandexCloudVideo
             class="news__video"
             src={newsData.yandexVideos[0]}
-            autoplay
+            autoplay={autoplay}
             mute
           />
         )
