@@ -1,6 +1,6 @@
 ---
 title: "Этот сайт :)"
-order: 3
+date: 2026-02-13
 items:
   - text: "frontend на astro"
     href: "https://astro.build/"

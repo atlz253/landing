@@ -1,6 +1,6 @@
 ---
 title: "Frontier"
-order: 2
+date: 2025-07-27
 href: "https://github.com/atlz253/frontier"
 description:
   - "JavaScript библиотека, которая помогает собирать модули системы без нарушения их границ"

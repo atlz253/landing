@@ -4,7 +4,7 @@ const projectCodeLanguageSchema = z.enum(["bash", "c"]);
 
 export const projectSchema = z.object({
   title: z.string(),
-  order: z.number(),
+  date: z.coerce.date(),
   href: z.string().url().optional(),
   description: z.union([z.string(), z.array(z.string())]).optional(),
   image: z.string().optional(),

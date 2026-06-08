@@ -1,6 +1,6 @@
 ---
 title: "Meowsonry"
-order: 1
+date: 2026-03-18
 href: "https://github.com/atlz253/meowsonry"
 image: "/collections/portfolio/meowsonry.png"
 imageAlt: "Демонстрация работы meowsonry"

@@ -1,6 +1,6 @@
 ---
 title: "Выступления на конференциях"
-order: 6
+date: 2026-14-23
 items:
   - text: "PiterJS #89"
     href: "https://piterjs.org/#!meetup=1gbs91_w8h9lp/speech=gget0z_jn2m34"

@@ -1,6 +1,6 @@
 ---
 title: "Герои зачета и сессии"
-order: 3
+date: 2021-12-22
 href: "https://github.com/atlz253/csheroes"
 image: "/collections/portfolio/csheroes.png"
 imageAlt: "csheroes"

@@ -1,6 +1,6 @@
 ---
 title: "Rondo neuronet project"
-order: 3
+date: 2024-04-30
 href: "https://github.com/atlz253/Rondo-neuronet-project"
 image: "/collections/portfolio/rondo.png"
 imageAlt: "Web-версия Rondo"

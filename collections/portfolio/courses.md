@@ -1,6 +1,6 @@
 ---
 title: "Повышение квалификации"
-order: 3
+date: 2025-12-30
 items:
   - text: "React. Разработка сложных клиентских приложений"
     href: "/courses/htmlacademy-react.pdf"

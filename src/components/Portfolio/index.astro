@@ -3,7 +3,9 @@ import { getCollection } from "astro:content";
 import PortfolioCard from "./components/PortfolioCard.astro";
 
 const projects = (await getCollection("portfolio")).sort(
-  (a, b) => a.data.order - b.data.order,
+  (a, b) =>
+    b.data.date.getTime() - a.data.date.getTime() ||
+    a.id.localeCompare(b.id),
 );
 ---
 
