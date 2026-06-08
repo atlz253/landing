@@ -1,6 +1,6 @@
 ---
 title: "Этот сайт :)"
-order: 8
+order: 3
 items:
   - text: "frontend на astro"
     href: "https://astro.build/"

@@ -13,7 +13,7 @@ export const projectSchema = z.object({
     .array(
       z.object({
         text: z.string(),
-        href: z.string().url().optional(),
+        href: z.string().optional(),
       }),
     )
     .optional(),

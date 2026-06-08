@@ -1,6 +1,6 @@
 ---
 title: "Bent code"
-order: 4
+order: 6
 href: "https://github.com/atlz253/Bent"
 description:
   - "Проект по созданию языка программирования и его транслятора на основе flex и bison"
