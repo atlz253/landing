@@ -61,10 +61,15 @@ const { Content } = await render(news);
 
   .images,
   .videos {
-    width: 98vw;
+    width: 96vw;
     display: flex;
     overflow-y: auto;
+    padding: var(--space-4);
     gap: var(--space-4);
+  }
+
+  .image {
+    box-shadow: var(--box-shadow-1);
   }
 </style>
 
@@ -89,6 +94,7 @@ const { Content } = await render(news);
                 src={getMusicNewsImage(i)}
                 alt={newsData.title}
                 height={300}
+                class="image"
               />
             ))}
           </div>

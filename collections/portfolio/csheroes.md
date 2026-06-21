@@ -2,8 +2,8 @@
 title: "Герои зачета и сессии"
 date: 2021-12-22
 href: "https://github.com/atlz253/csheroes"
-image: "/collections/portfolio/csheroes.png"
-imageAlt: "csheroes"
+images:
+  - /collections/portfolio/csheroes.png
 description:
   - "Игра, вдохновленная серией игр «Heroes of Might and Magic»"
 ---

@@ -33,6 +33,7 @@ const description = normalizeDescription(
 const actionHref = project.body?.trim()
   ? `/portfolio/${project.id}`
   : project.data.href;
+const previewImage = project.data.images?.[0];
 ---
 
 <style>
@@ -79,10 +80,10 @@ const actionHref = project.body?.trim()
   <Card class="portfolioCard">
     <h2>{project.data.title}</h2>
     {
-      project.data.image && (
+      previewImage && (
         <Image
-          src={getPortfolioImage(project.data.image)}
-          alt={project.data.imageAlt ?? project.data.title}
+          src={getPortfolioImage(previewImage)}
+          alt={project.data.title}
           class="portfolioImage"
         />
       )
