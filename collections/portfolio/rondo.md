@@ -14,7 +14,7 @@ Rondo neuronet project - набор программ для распознава
 
 <details>
   <summary>
-  Запустить игру
+  Запустить проект
   </summary>
 
   <iframe
