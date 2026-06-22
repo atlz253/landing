@@ -22,3 +22,17 @@ code:
       i = i + 1;
     }
 ---
+
+Проект по созданию языка программирования и его транслятора на основе flex и bison
+
+<details>
+  <summary>
+  Запустить web-редактор
+  </summary>
+
+  <iframe
+    src="https://atlz253.github.io/Bent/"
+    width="100%"
+    height="1000"
+  ></iframe>
+</details>
