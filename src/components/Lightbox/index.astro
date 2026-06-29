@@ -1,0 +1,564 @@
+---
+import ChevronPrev from "./assets/chevron-prev.svg";
+import ChevronNext from "./assets/chevron-next.svg";
+import Button from "../../ui/components/Button/index.astro";
+
+interface ImageEntry {
+  src: string;
+  alt: string;
+}
+
+interface Props {
+  images: ImageEntry[];
+}
+
+const { images } = Astro.props;
+const imagesJson = JSON.stringify(images);
+---
+
+<style>
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-index-6);
+    background: rgba(0, 0, 0, 0.9);
+    border: none;
+    max-width: 100vw;
+    max-height: 100vh;
+    overflow: hidden;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    pointer-events: none;
+    touch-action: none;
+    transition: opacity var(--transition-duration-3) ease;
+  }
+
+  .lightbox[open] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .lightbox::backdrop {
+    background: transparent;
+  }
+
+  .lightbox__controls {
+    position: absolute;
+    bottom: var(--space-8);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    z-index: var(--z-index-1);
+  }
+
+  .lightbox__image {
+    width: 100vw;
+    height: 100vh;
+    object-fit: contain;
+    box-shadow: var(--box-shadow-4);
+    opacity: 0;
+    cursor: zoom-in;
+    transition: opacity var(--transition-duration-3) ease;
+  }
+
+  .lightbox[open] .lightbox__image {
+    opacity: 1;
+  }
+
+  .lightbox[data-zoomed] .lightbox__image {
+    cursor: grab;
+  }
+
+  .lightbox[data-dragging] .lightbox__image {
+    cursor: grabbing;
+  }
+
+  .lightbox__btn {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--space-9);
+    display: inline-grid;
+    place-items: center;
+  }
+
+  .lightbox__close-btn {
+    margin-left: var(--space-8);
+    font-size: 1.75rem;
+  }
+
+  .lightbox__counter {
+    background: rgba(0, 0, 0, 0.5);
+    color: var(--color-white);
+    border-radius: var(--space-9);
+    padding: 0 var(--space-5);
+    height: 48px;
+    display: grid;
+    place-items: center;
+    font-size: var(--font-size-2);
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  .lightbox--hidden {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .lightbox__btn {
+      min-width: 44px;
+      min-height: 44px;
+    }
+
+    .lightbox__image {
+      width: 100vw;
+      height: 100vh;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lightbox,
+    .lightbox__image {
+      transition: none;
+    }
+  }
+</style>
+
+<dialog
+  class="lightbox"
+  data-lightbox
+  data-lightbox-images={imagesJson}
+>
+  <img class="lightbox__image" alt="" data-lightbox-image />
+  <div class="lightbox__controls">
+    <Button variant="ghost" class="lightbox__btn" aria-label="Предыдущее фото" data-lightbox-prev>
+      <ChevronPrev />
+    </Button>
+    <span class="lightbox__counter" data-lightbox-counter></span>
+    <Button variant="ghost" class="lightbox__btn" aria-label="Следующее фото" data-lightbox-next>
+      <ChevronNext />
+    </Button>
+    <Button variant="ghost" class="lightbox__btn lightbox__close-btn" aria-label="Закрыть" data-lightbox-close>
+      &times;
+    </Button>
+  </div>
+</dialog>
+
+<script>
+  let currentIndex = 0;
+  let images: { src: string; alt: string }[] = [];
+  let dialog: HTMLDialogElement | null = null;
+  let img: HTMLImageElement | null = null;
+  let counter: HTMLElement | null = null;
+  let prevBtn: HTMLElement | null = null;
+  let nextBtn: HTMLElement | null = null;
+  let closeBtn: HTMLElement | null = null;
+  let thumbnails: NodeListOf<HTMLElement> | null = null;
+
+  let scale = 1;
+  let translateX = 0;
+  let translateY = 0;
+  let touchMode: "none" | "swipe" | "pan" | "pinch" = "none";
+  let isDragging = false;
+  let dragOccurred = false;
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let dragStartTX = 0;
+  let dragStartTY = 0;
+  let panStartX = 0;
+  let panStartY = 0;
+  let panStartTX = 0;
+  let panStartTY = 0;
+  let pinchStartDist = 0;
+  let pinchStartScale = 1;
+  let pinchCenterX = 0;
+  let pinchCenterY = 0;
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let ignoreMouseEvents = false;
+  const MAX_ZOOM = 3;
+
+  function clamp(v: number, min: number, max: number) {
+    return Math.max(min, Math.min(max, v));
+  }
+
+  function applyTransform() {
+    if (!img) return;
+    img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+  }
+
+  function constrainPan() {
+    if (!img) return;
+    const baseW = img.offsetWidth;
+    const baseH = img.offsetHeight;
+    if (baseW === 0 || baseH === 0) return;
+    const maxX = Math.max(0, (baseW * scale - window.innerWidth) / 2);
+    const maxY = Math.max(0, (baseH * scale - window.innerHeight) / 2);
+    translateX = clamp(translateX, -maxX, maxX);
+    translateY = clamp(translateY, -maxY, maxY);
+  }
+
+  function updateZoomState() {
+    if (!dialog || !img) return;
+    if (scale > 1) {
+      dialog.setAttribute("data-zoomed", "");
+      img.style.cursor = "grab";
+    } else {
+      dialog.removeAttribute("data-zoomed");
+      img.style.cursor = "zoom-in";
+    }
+  }
+
+  function zoomTo(newScale: number, pointX: number, pointY: number) {
+    if (!img) return;
+    const rect = img.getBoundingClientRect();
+    const offX = pointX - (rect.left + rect.width / 2);
+    const offY = pointY - (rect.top + rect.height / 2);
+    const ratio = newScale / scale;
+    translateX = offX - (offX - translateX) * ratio;
+    translateY = offY - (offY - translateY) * ratio;
+    scale = newScale;
+    if (scale === 1) {
+      translateX = 0;
+      translateY = 0;
+    }
+    constrainPan();
+    applyTransform();
+    updateZoomState();
+  }
+
+  function resetZoom() {
+    scale = 1;
+    translateX = 0;
+    translateY = 0;
+    applyTransform();
+    updateZoomState();
+  }
+
+  function enableTransition() {
+    if (!img) return;
+    img.style.transition = "opacity var(--transition-duration-3) ease, transform var(--transition-duration-2) ease";
+  }
+
+  function disableTransition() {
+    if (!img) return;
+    img.style.transition = "";
+  }
+
+  function getElements() {
+    dialog = document.querySelector<HTMLDialogElement>("[data-lightbox]");
+    if (!dialog) return;
+
+    const raw = dialog.getAttribute("data-lightbox-images");
+    if (raw) {
+      try {
+        images = JSON.parse(raw);
+      } catch {
+        images = [];
+      }
+    }
+
+    img = dialog.querySelector<HTMLImageElement>("[data-lightbox-image]");
+    counter = dialog.querySelector("[data-lightbox-counter]");
+    prevBtn = dialog.querySelector("[data-lightbox-prev]");
+    nextBtn = dialog.querySelector("[data-lightbox-next]");
+    closeBtn = dialog.querySelector("[data-lightbox-close]");
+    thumbnails = document.querySelectorAll("[data-lightbox-index]");
+  }
+
+  function open(index: number) {
+    if (!dialog || !img || !counter || images.length === 0) return;
+    currentIndex = index;
+    resetZoom();
+    updateImage();
+    dialog.showModal();
+  }
+
+  function close() {
+    if (!dialog) return;
+    resetZoom();
+    dialog.close();
+  }
+
+  function prev() {
+    if (images.length <= 1) return;
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    enableTransition();
+    updateImage();
+    resetZoom();
+    setTimeout(disableTransition, 200);
+  }
+
+  function next() {
+    if (images.length <= 1) return;
+    currentIndex = (currentIndex + 1) % images.length;
+    enableTransition();
+    updateImage();
+    resetZoom();
+    setTimeout(disableTransition, 200);
+  }
+
+  function updateImage() {
+    if (!img || !counter || !prevBtn || !nextBtn) return;
+    const entry = images[currentIndex];
+    if (!entry) return;
+
+    img.src = entry.src;
+    img.alt = entry.alt;
+    counter.textContent = `${currentIndex + 1} / ${images.length}`;
+
+    if (images.length <= 1) {
+      prevBtn.style.display = "none";
+      nextBtn.style.display = "none";
+    } else {
+      prevBtn.style.display = "grid";
+      nextBtn.style.display = "grid";
+    }
+  }
+
+  function handleKeydown(e: KeyboardEvent) {
+    if (!dialog?.open) return;
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      prev();
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      next();
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      close();
+    }
+  }
+
+  function isClickOnImageContent(x: number, y: number) {
+    if (!img) return false;
+    const natW = img.naturalWidth;
+    const natH = img.naturalHeight;
+    if (natW === 0 || natH === 0) return false;
+    const rect = img.getBoundingClientRect();
+    const contW = rect.width;
+    const contH = rect.height;
+    const ratio = Math.min(contW / natW, contH / natH);
+    const drawW = natW * ratio;
+    const drawH = natH * ratio;
+    const drawX = rect.left + (contW - drawW) / 2;
+    const drawY = rect.top + (contH - drawH) / 2;
+    return (
+      x >= drawX && x <= drawX + drawW && y >= drawY && y <= drawY + drawH
+    );
+  }
+
+  function handleDialogClick(e: MouseEvent) {
+    if (ignoreMouseEvents) return;
+    if (dragOccurred) {
+      dragOccurred = false;
+      return;
+    }
+    if (scale > 1) return;
+    if (e.target === dialog || (e.target === img && !isClickOnImageContent(e.clientX, e.clientY))) {
+      close();
+    }
+  }
+
+  function handleCancel(e: Event) {
+    e.preventDefault();
+    close();
+  }
+
+  function handleWheel(e: WheelEvent) {
+    if (!dialog?.open) return;
+    e.preventDefault();
+    const factor = e.deltaY < 0 ? 1.15 : 1 / 1.15;
+    zoomTo(clamp(scale * factor, 1, MAX_ZOOM), e.clientX, e.clientY);
+  }
+
+  function handleMouseDown(e: MouseEvent) {
+    if (ignoreMouseEvents) return;
+    if (!dialog?.open || scale <= 1) return;
+    e.preventDefault();
+    isDragging = true;
+    dragOccurred = false;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    dragStartTX = translateX;
+    dragStartTY = translateY;
+    dialog?.setAttribute("data-dragging", "");
+    disableTransition();
+  }
+
+  function handleMouseMove(e: MouseEvent) {
+    if (ignoreMouseEvents) return;
+    if (!isDragging || !img) return;
+    translateX = dragStartTX + (e.clientX - dragStartX);
+    translateY = dragStartTY + (e.clientY - dragStartY);
+    if (Math.abs(e.clientX - dragStartX) > 5 || Math.abs(e.clientY - dragStartY) > 5) {
+      dragOccurred = true;
+    }
+    constrainPan();
+    applyTransform();
+  }
+
+  function handleMouseUp() {
+    if (ignoreMouseEvents) return;
+    isDragging = false;
+    dialog?.removeAttribute("data-dragging");
+  }
+
+  function handleTouchStart(e: TouchEvent) {
+    ignoreMouseEvents = true;
+    if (!dialog?.open) return;
+    if (e.touches.length === 2) {
+      touchMode = "pinch";
+      const dx = e.touches[1].clientX - e.touches[0].clientX;
+      const dy = e.touches[1].clientY - e.touches[0].clientY;
+      pinchStartDist = Math.hypot(dx, dy);
+      pinchStartScale = scale;
+      pinchCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      pinchCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      disableTransition();
+    } else if (e.touches.length === 1) {
+      if (scale > 1) {
+        touchMode = "pan";
+        panStartX = e.touches[0].clientX;
+        panStartY = e.touches[0].clientY;
+        panStartTX = translateX;
+        panStartTY = translateY;
+      } else {
+        touchMode = "swipe";
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }
+    }
+  }
+
+  function handleTouchMove(e: TouchEvent) {
+    if (!dialog?.open) return;
+    if (touchMode === "pinch" && e.touches.length === 2) {
+      e.preventDefault();
+      const dx = e.touches[1].clientX - e.touches[0].clientX;
+      const dy = e.touches[1].clientY - e.touches[0].clientY;
+      const curDist = Math.hypot(dx, dy);
+      const newScale = clamp(pinchStartScale * (curDist / Math.max(pinchStartDist, 1)), 1, MAX_ZOOM);
+      zoomTo(newScale, pinchCenterX, pinchCenterY);
+    } else if (touchMode === "pan" && e.touches.length === 1) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      translateX = panStartTX + (touch.clientX - panStartX);
+      translateY = panStartTY + (touch.clientY - panStartY);
+      constrainPan();
+      applyTransform();
+    }
+  }
+
+  function handleTouchEnd(e: TouchEvent) {
+    if (!dialog?.open) return;
+
+    if (touchMode === "pinch") {
+      if (e.touches.length === 1) {
+        touchMode = "pan";
+        panStartX = e.touches[0].clientX;
+        panStartY = e.touches[0].clientY;
+        panStartTX = translateX;
+        panStartTY = translateY;
+      } else if (e.touches.length === 0) {
+        touchMode = "none";
+        constrainPan();
+        applyTransform();
+      }
+      return;
+    }
+
+    if (touchMode === "pan") {
+      if (e.touches.length === 0) {
+        touchMode = "none";
+      }
+      return;
+    }
+
+    if (touchMode === "swipe") {
+      const touch = e.changedTouches[0];
+      const deltaX = touch.clientX - touchStartX;
+      const deltaY = touch.clientY - touchStartY;
+
+      if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+        if (deltaX > 0) {
+          prev();
+        } else {
+          next();
+        }
+      }
+      touchMode = "none";
+    }
+    setTimeout(() => { ignoreMouseEvents = false; }, 500);
+  }
+
+  function handleTouchCancel() {
+    touchMode = "none";
+    ignoreMouseEvents = false;
+  }
+
+  function handleThumbnailClick(e: Event) {
+    const thumb = e.currentTarget as HTMLElement;
+    const idx = parseInt(thumb.getAttribute("data-lightbox-index") || "0", 10);
+    open(idx);
+  }
+
+  function init() {
+    getElements();
+    if (!dialog || images.length === 0) return;
+
+    resetZoom();
+    disableTransition();
+
+    thumbnails?.forEach((thumb) => {
+      thumb.addEventListener("click", handleThumbnailClick);
+    });
+
+    prevBtn?.addEventListener("click", prev);
+    nextBtn?.addEventListener("click", next);
+    closeBtn?.addEventListener("click", close);
+    dialog.addEventListener("click", handleDialogClick);
+    dialog.addEventListener("cancel", handleCancel);
+    document.addEventListener("keydown", handleKeydown);
+    dialog.addEventListener("wheel", handleWheel, { passive: false });
+    img?.addEventListener("mousedown", handleMouseDown);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+    dialog.addEventListener("touchstart", handleTouchStart, { passive: true });
+    dialog.addEventListener("touchmove", handleTouchMove, { passive: false });
+    dialog.addEventListener("touchend", handleTouchEnd, { passive: true });
+    dialog.addEventListener("touchcancel", handleTouchCancel);
+  }
+
+  function destroy() {
+    thumbnails?.forEach((thumb) => {
+      thumb.removeEventListener("click", handleThumbnailClick);
+    });
+    prevBtn?.removeEventListener("click", prev);
+    nextBtn?.removeEventListener("click", next);
+    closeBtn?.removeEventListener("click", close);
+    dialog?.removeEventListener("click", handleDialogClick);
+    dialog?.removeEventListener("cancel", handleCancel);
+    document.removeEventListener("keydown", handleKeydown);
+    dialog?.removeEventListener("wheel", handleWheel);
+    img?.removeEventListener("mousedown", handleMouseDown);
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
+    dialog?.removeEventListener("touchstart", handleTouchStart);
+    dialog?.removeEventListener("touchmove", handleTouchMove);
+    dialog?.removeEventListener("touchend", handleTouchEnd);
+    dialog?.removeEventListener("touchcancel", handleTouchCancel);
+  }
+
+  document.addEventListener("astro:page-load", init);
+  document.addEventListener("astro:before-preparation", () => {
+    if (dialog?.open) {
+      close();
+    }
+    destroy();
+  });
+</script>

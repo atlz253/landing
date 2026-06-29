@@ -2,9 +2,11 @@
 import Layout from "../../components/Layout.astro";
 import Head from "../../components/Head.astro";
 import { getCollection, render } from "astro:content";
+import { getImage } from "astro:assets";
 import Image from "astro/components/Image.astro";
 import ButtonLink from "../../ui/components/ButtonLink/index.astro";
 import { getPortfolioImage } from "../../features/viewPortfolio/collections/portfolio/getPortfolioImage";
+import Lightbox from "../../components/Lightbox/index.astro";
 
 const { projectId } = Astro.params;
 
@@ -27,6 +29,27 @@ if (!project) {
 }
 
 const { Content } = await render(project);
+
+const lightboxImages = project.data.images
+  ? (
+      await Promise.all(
+        project.data.images.map(async (image) => {
+          const resolved = getPortfolioImage(image);
+          if (!resolved) return null;
+          try {
+            const full = await getImage({
+              src: resolved,
+              height: 1200,
+              format: "webp",
+            });
+            return { src: full.src, alt: project.data.title };
+          } catch {
+            return null;
+          }
+        }),
+      )
+    ).filter((x): x is { src: string; alt: string } => x !== null)
+  : [];
 ---
 
 <style>
@@ -53,6 +76,7 @@ const { Content } = await render(project);
 
   .projectImage {
     box-shadow: var(--box-shadow-1);
+    cursor: zoom-in;
   }
 
   .actions {
@@ -85,17 +109,19 @@ const { Content } = await render(project);
         <>
           <h2>Фото</h2>
           <div class="images">
-            {project.data.images.map((image) => (
+            {project.data.images.map((image, i) => (
               <Image
                 src={getPortfolioImage(image)}
                 alt={project.data.title}
                 height={300}
                 class="projectImage"
+                data-lightbox-index={i}
               />
             ))}
           </div>
         </>
       )
     }
+    {lightboxImages.length > 0 && <Lightbox images={lightboxImages} />}
   </Layout>
 </html>

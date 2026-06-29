@@ -10,9 +10,11 @@
     --button-color: var(--color-white);
     --button-background-color: var(--color-blue-5);
     cursor: pointer;
+    user-select: none;
     display: inline-block;
     color: var(--button-color);
     border-radius: var(--space-2);
+    -webkit-tap-highlight-color: transparent;
     border: 1px solid var(--button-background-color);
     background-color: var(--button-background-color);
     transition: background-color var(--transition-duration-1) ease;
@@ -33,5 +35,18 @@
 
   .button_size2 {
     padding: var(--space-2);
+  }
+
+  .button_ghost {
+    --button-background-color: rgba(0, 0, 0, 0.5);
+    border: none;
+    transition:
+      opacity var(--transition-duration-2) ease,
+      background-color var(--transition-duration-2) ease;
+  }
+
+  .button_ghost:hover {
+    --button-background-color: rgba(0, 0, 0, 0.8);
+    opacity: 1;
   }
 }

@@ -6,14 +6,20 @@ import {
 
 interface Props {
   size?: ButtonSize;
+  variant?: "ghost";
   [key: string]: unknown;
 }
 
-const { size, class: className, ...rest } = Astro.props;
+const { size, variant, class: className, ...rest } = Astro.props;
 ---
 
 <button
-  class:list={["button", size && BUTTON_SIZE_TO_CLASS[size], className]}
+  class:list={[
+    "button",
+    size && BUTTON_SIZE_TO_CLASS[size],
+    variant && `button_${variant}`,
+    className,
+  ]}
   {...rest}
 >
   <slot />

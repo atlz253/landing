@@ -24,3 +24,7 @@ export const Size2 = {
 export const Size3 = {
   args: { size: 3 } satisfies ButtonProps,
 };
+
+export const Ghost = {
+  args: { variant: "ghost" } satisfies ButtonProps,
+};

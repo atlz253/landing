@@ -2,11 +2,13 @@
 import Layout from "../../components/Layout.astro";
 import Head from "../../components/Head.astro";
 import { getCollection, render } from "astro:content";
+import { getImage } from "astro:assets";
 import Image from "astro/components/Image.astro";
 import type { News } from "../../features/viewNews/schemas";
 import YandexCloudVideo from "../../integrations/yandexCloud/cloudVideo/components/YandexCloudVideo.astro";
 import { getMusicNewsImage } from "../../features/viewNews/collections/musicNews/getMusicNewsImage";
 import VKVideo from "../../integrations/vk/components/VKVideo.astro";
+import Lightbox from "../../components/Lightbox/index.astro";
 
 const { newsId } = Astro.params;
 
@@ -25,6 +27,27 @@ if (!news) {
 }
 
 const newsData: News = news.data;
+
+const lightboxImages = newsData.images
+  ? (
+      await Promise.all(
+        newsData.images.map(async (image) => {
+          const resolved = getMusicNewsImage(image);
+          if (!resolved) return null;
+          try {
+            const full = await getImage({
+              src: resolved,
+              height: 1200,
+              format: "webp",
+            });
+            return { src: full.src, alt: newsData.title };
+          } catch {
+            return null;
+          }
+        }),
+      )
+    ).filter((x): x is { src: string; alt: string } => x !== null)
+  : [];
 
 const { Content } = await render(news);
 ---
@@ -70,6 +93,7 @@ const { Content } = await render(news);
 
   .image {
     box-shadow: var(--box-shadow-1);
+    cursor: zoom-in;
   }
 </style>
 
@@ -89,12 +113,13 @@ const { Content } = await render(news);
         <>
           <h2>Фото</h2>
           <div class="images">
-            {newsData.images.map((i) => (
+            {newsData.images.map((i, index) => (
               <Image
                 src={getMusicNewsImage(i)}
                 alt={newsData.title}
                 height={300}
                 class="image"
+                data-lightbox-index={index}
               />
             ))}
           </div>
@@ -117,5 +142,6 @@ const { Content } = await render(news);
       )
     }
     <small>{newsData.date.toLocaleDateString("ru-RU")}</small>
+    {lightboxImages.length > 0 && <Lightbox images={lightboxImages} />}
   </Layout>
 </html>
