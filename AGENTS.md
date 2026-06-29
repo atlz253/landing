@@ -7,27 +7,56 @@
 ## Структура проекта
 
 ```
+collections/
+├── musicNews/                 # Markdown-файлы музыкальных новостей + изображения
+└── portfolio/                 # Markdown-файлы проектов портфолио + изображения
 src/
 ├── components/
+│   ├── Card.astro             # Универсальный компонент карточки
+│   ├── Favicon/               # Favicon-иконки разных размеров
+│   ├── Fireworks/             # Эффект фейерверков (index.astro + fireworks.ts)
 │   ├── FirstScreen/           # Начальный раздел с личной информацией
-│   ├── Portfolio/             # Раздел с показом проектов
-│   ├── Header.astro           # Навигационная панель
 │   ├── Footer.astro           # Футер страницы
-│   ├── Layout.astro           # Основная структура страницы
+│   ├── GoogleFonts.astro      # Подключение Google Fonts (IBM Plex Sans)
 │   ├── Head.astro             # SEO-компонент с мета-тегами
-│   ├── Yandex/                # Компоненты для аналитики Yandex
-│   └── SocialMediaLinks/      # Ссылки на социальные сети
+│   ├── Header.astro           # Навигационная панель
+│   ├── Layout.astro           # Основная структура страницы
+│   ├── Lightbox/              # Компонент лайтбокса для изображений
+│   ├── Link.astro             # Компонент ссылки
+│   ├── List.astro             # Компонент списка
+│   ├── Portfolio/             # Раздел с показом проектов
+│   ├── PrettyParagraph.astro  # Компонент форматированного абзаца
+│   ├── SocialMediaLinks/      # Ссылки на социальные сети
+│   └── Yandex/                # Компоненты для аналитики Yandex
+├── features/
+│   ├── viewNews/              # Фича отображения музыкальных новостей
+│   │   ├── collections/       # Утилиты для загрузки изображений новостей
+│   │   ├── components/        # NewsCard и утилиты определения типа превью
+│   │   └── schemas/           # Zod-схема новости (title, date, images, yandexVideos, vkVideos)
+│   └── viewPortfolio/         # Фича отображения проектов портфолио
+│       ├── collections/       # Утилиты для загрузки изображений проектов
+│       └── schemas/           # Zod-схема проекта (title, date, href, description, items, code)
+├── integrations/
+│   ├── vk/                    # Интеграция VK (VKVideo.astro)
+│   └── yandexCloud/           # Интеграция Yandex Cloud (YandexCloudVideo.astro)
 ├── pages/
+│   ├── 404.astro              # Страница 404
 │   ├── index.astro            # Главная лендинг страница
 │   ├── music.astro            # Листинг музыкальных новостей
-│   └── music/[newsId].astro   # Детальная страница новости
-├── features/
-│   └── viewNews/              # Фича-папка для отображения новостей
-│       ├── collections/       # Утилиты для работы с коллекциями
-│       ├── components/        # Компоненты фичи (NewsCard и т.д.)
-│       └── schemas/           # Zod-схемы валидации данных
+│   ├── music/[newsId].astro   # Детальная страница новости
+│   └── portfolio/[projectId].astro # Детальная страница проекта
+├── styles/
+│   ├── index.css              # Дизайн-система (CSS-переменные, @layer ui, сброс)
+│   ├── button.css             # Стили кнопок
+│   └── constants/             # Константы стилей (BUTTON_SIZE_TO_CLASS)
+├── ui/
+│   └── components/            # UI-компоненты с Astrobook-сториз
+│       ├── Button/            # Компонент кнопки + story
+│       ├── ButtonLink/        # Компонент ссылки-кнопки + story
+│       └── Typography/        # Сториз типографики
 └── utils/
-    └── number/                # Утилиты для работы с числами
+    ├── css.ts                 # CSS-утилиты (url helper)
+    └── number/                # Утилиты для работы с числами (foldStringToNumber)
 ```
 
 ## Используемые технологии
@@ -38,7 +67,7 @@ src/
 
 ### Дизайн-система проекта
 
-Все компоненты должны использовать общую дизайн-систему, определенную в `src/components/GlobalStyles/index.astro`.
+Все компоненты должны использовать общую дизайн-систему, определенную в `src/styles/index.css`.
 Если в системе не хватает необходимых переменных — развивай её, а не придумывай решение на месте.
 
 #### Рекомендации по анимациям
@@ -49,15 +78,19 @@ src/
 
 ### Текущие CSS переменные:
 
-- **Шкала отступов**: `--space-1` до `--space-6`
+- **Шкала отступов**: `--space-1` до `--space-9`
 - **Цветовые палитры**:
   - Желтая (`yellow-1..10`) — выделения и акценты
   - Красная (`red-1..10`) — ошибки и предупреждения
   - Серая (`grey-1..10`) — текст и фоны
   - Синяя (`blue-1..10`) — основные действия и ссылки
+  - Базовые цвета: `--color-white`, `--color-black`
 - **Шкала теней**: `--box-shadow-1` до `--box-shadow-4` (от карточек до всплывающих элементов)
-- **z-index**: `--z-index-1` до `--z-index-5`
+- **z-index**: `--z-index-1` до `--z-index-6`
 - **transition-анимации**: `--transition-duration-1` (75ms), `--transition-duration-2` (150ms), `--transition-duration-3` (300ms)
+- **Типографика**: `--font-family-sans: "IBM Plex Sans", sans-serif`, `--font-size-1` до `--font-size-5` с соответствующими line-height
+- **Макет**: `--content-width-max: 1440px`
+- **Слои каскада**: `@layer ui` — все компонентные стили в слое `ui`
 
 ### Astro
 
@@ -69,6 +102,7 @@ src/
 Проект использует Markdown-файлы для управления контентом новостей:
 
 - **Схемы валидации**: Zod-схемы (`src/features/viewNews/schemas/`) определяют структуру данных
+- **Конфигурация коллекций**: `src/content.config.ts` определяет коллекции через `defineCollection` с `glob`-загрузчиком
 - **Загрузка коллекций**: `getCollection("musicNews")` загружает Markdown-файлы из `collections/musicNews/`
 - **Динамическая генерация страниц**: `getStaticPaths()` создаёт отдельные страницы для каждой новости
 
@@ -80,8 +114,10 @@ title: "Отчетный концерт клуба «Живой звук» 2025"
 date: 06-07-2025
 images:
   - /collections/musicNews/отчетный-концерт-жз-2025.jpg
-videos:
+yandexVideos:
   - https://runtime.video.cloud.yandex.net/player/video/vplvrcab7dowsinl4v5m?autoplay=1&mute=1
+vkVideos:
+  - https://vk.com/video_ext.php?oid=-37156927&id=456239314&autoplay=1
 ---
 
 Текст новости с поддержкой Markdown и HTML.
@@ -137,15 +173,25 @@ videos:
 - `npm run lint:js` — только ESLint
 - `npm run lint:css` — только Stylelint для `.css` и `.astro`
 
+### Типизация
+
+- `npm run typecheck` — проверка типов через `astro check`
+
+### Тестирование деплоя
+
+- `npm run workflows.deploy.test` — локальный тест CI/CD через act-cli (требует `.github/.secrets.local`)
+
 ## Конфигурационные файлы
 
-- `astro.config.mjs`: Конфигурация Astro с настройками отзывчивых изображений и сервера
+- `astro.config.mjs`: Конфигурация Astro с настройками отзывчивых изображений, сервера и интеграцией astrobook (`/astrobook`)
 - `src/pages/music.astro`: Листинг музыкальных новостей с сортировкой по дате
 - `src/pages/music/[newsId].astro`: Детальная страница отдельной новости
 - `.github/.secrets.local`: Локальные секреты для тестирования CI/CD с act-cli
 - `src/pages/index.astro`: Главная страница с приветствием и портфолио
 - `src/components/Head.astro`: SEO-компонент с поддержкой динамического заголовка
-- `src/components/GlobalStyles/index.astro`: Централизованная дизайн-система (переменные, стили по умолчанию)
+- `src/styles/index.css`: Централизованная дизайн-система (переменные, стили по умолчанию)
 - `package.json`: Зависимости проекта и скрипты
 - `eslint.config.ts`: Конфигурация ESLint (flat config с type-aware правилами TypeScript + Astro + jsx-a11y)
 - `stylelint.config.mjs`: Конфигурация Stylelint для CSS в `.css` и `<style>` блоках `.astro` файлов
+- `vite.config.ts`: Конфигурация Vite (terser-минификация, HTML-минификация)
+- `src/content.config.ts`: Конфигурация коллекций контента (musicNews + portfolio)
