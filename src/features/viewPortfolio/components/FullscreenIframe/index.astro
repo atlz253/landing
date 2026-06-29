@@ -1,0 +1,119 @@
+<script>
+  function createWrapper() {
+    const wrapper = document.createElement("div");
+    wrapper.className = "fullscreenIframe";
+
+    wrapper.innerHTML = `
+      <div class="fullscreenIframe__toolbar">
+        <button class="button button_ghost fullscreenIframe__enter">Во весь экран</button>
+      </div>
+      <button class="button button_ghost fullscreenIframe__exit">&times;</button>
+    `;
+
+    return wrapper;
+  }
+
+  function init() {
+    const container = document.querySelector("[data-portfolio-content]");
+    if (!container) return;
+
+    const iframes = container.querySelectorAll("iframe");
+
+    iframes.forEach((iframe) => {
+      if (iframe.closest(".fullscreenIframe")) return;
+
+      const wrapper = createWrapper();
+      const exitBtn = wrapper.querySelector<HTMLElement>(
+        ".fullscreenIframe__exit",
+      );
+      const enterBtn = wrapper.querySelector<HTMLElement>(
+        ".fullscreenIframe__enter",
+      );
+      if (!exitBtn || !enterBtn) return;
+
+      const originalWidth = iframe.getAttribute("width") || "100%";
+      const originalHeight = iframe.getAttribute("height") || "500";
+      const widthValue = /^\d+$/.test(originalWidth)
+        ? originalWidth + "px"
+        : originalWidth;
+      const heightValue = /^\d+$/.test(originalHeight)
+        ? originalHeight + "px"
+        : originalHeight;
+      wrapper.style.setProperty("--original-width", widthValue);
+      wrapper.style.setProperty("--original-height", heightValue);
+      iframe.removeAttribute("width");
+      iframe.removeAttribute("height");
+
+      iframe.parentNode?.insertBefore(wrapper, iframe);
+      wrapper.insertBefore(iframe, exitBtn);
+
+      if (
+        typeof document.fullscreenEnabled === "boolean" &&
+        !document.fullscreenEnabled
+      ) {
+        enterBtn.style.display = "none";
+      }
+
+      enterBtn.addEventListener("click", () => {
+        wrapper.requestFullscreen().catch(() => {});
+      });
+
+      exitBtn.addEventListener("click", () => {
+        document.exitFullscreen();
+      });
+    });
+  }
+
+  function destroy() {
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    }
+  }
+
+  document.addEventListener("astro:page-load", init);
+  document.addEventListener("astro:before-preparation", destroy);
+</script>
+
+<style is:global>
+  @layer ui {
+    .fullscreenIframe__exit {
+      position: absolute;
+      top: var(--space-4);
+      right: var(--space-4);
+      z-index: var(--z-index-6);
+      min-width: 48px;
+      min-height: 48px;
+      font-size: 1.75rem;
+      color: var(--color-white);
+    }
+
+    .fullscreenIframe:fullscreen {
+      width: 100vw;
+      height: 100vh;
+      background: var(--color-black);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .fullscreenIframe:fullscreen iframe {
+      flex: 1;
+      width: 100%;
+      min-height: 0;
+      border: none;
+    }
+
+    .fullscreenIframe:not(:fullscreen) iframe {
+      width: var(--original-width, 100%);
+      height: var(--original-height, 500px);
+    }
+
+    .fullscreenIframe:not(:fullscreen) .fullscreenIframe__exit {
+      display: none;
+    }
+
+    .fullscreenIframe:fullscreen .fullscreenIframe__toolbar {
+      display: none;
+    }
+  }
+</style>

@@ -7,6 +7,7 @@ import Image from "astro/components/Image.astro";
 import ButtonLink from "../../ui/components/ButtonLink/index.astro";
 import { getPortfolioImage } from "../../features/viewPortfolio/collections/portfolio/getPortfolioImage";
 import Lightbox from "../../components/Lightbox/index.astro";
+import FullscreenIframe from "../../features/viewPortfolio/components/FullscreenIframe/index.astro";
 
 const { projectId } = Astro.params;
 
@@ -92,7 +93,7 @@ const lightboxImages = project.data.images
   </head>
   <Layout>
     <div class="contentWrapper">
-      <div class="content">
+      <div class="content" data-portfolio-content>
         <h1>{project.data.title}</h1>
         {
           project.data.href && (
@@ -123,5 +124,6 @@ const lightboxImages = project.data.images
       )
     }
     {lightboxImages.length > 0 && <Lightbox images={lightboxImages} />}
+    <FullscreenIframe />
   </Layout>
 </html>
