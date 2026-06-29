@@ -12,10 +12,14 @@
     "lint:css": "stylelint \"src/**/*.{css,astro}\"",
     "typecheck": "astro check"
   },
+  "overrides": {
+    "eslint-plugin-jsx-a11y": {
+      "eslint": "$eslint"
+    }
+  },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
     "@eslint/js": "^10.0.1",
-    "@types/eslint-plugin-jsx-a11y": "^6.10.1",
     "@types/node": "^25.2.3",
     "@typescript-eslint/parser": "^8.62.0",
     "astro": "^5.17.1",
