@@ -12,10 +12,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: "20"
           cache: "npm"
@@ -72,12 +72,12 @@ jobs:
         run: |
           yc serverless api-gateway get-spec ${{secrets.YC_LANDING_API_GATEWAY_ID}} > current-landing-gateway.yml
 
-      - uses: jbutcher5/read-yaml@main
+      - name: Get previous bucket name
         id: prev-bucket-id
-        with:
-          file: "./current-landing-gateway.yml"
-          key-path: '["paths", "/", "get", "x-yc-apigateway-integration", "bucket"]'
         continue-on-error: true
+        run: |
+          PREV_BUCKET=$(yq '.paths["/"].get["x-yc-apigateway-integration"].bucket' current-landing-gateway.yml 2>/dev/null || true)
+          echo "data=$PREV_BUCKET" >> "$GITHUB_OUTPUT"
 
       - name: update API gateway
         run: |
