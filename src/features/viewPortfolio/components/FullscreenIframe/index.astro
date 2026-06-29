@@ -104,7 +104,8 @@
     }
 
     .fullscreenIframe:not(:fullscreen) iframe {
-      width: var(--original-width, 100%);
+      width: 100%;
+      max-width: var(--original-width, 100%);
       height: var(--original-height, 500px);
     }
 

@@ -154,6 +154,7 @@
   pre {
     padding: var(--space-4);
     border-radius: var(--space-3);
+    overflow-x: auto;
   }
 
   a {
@@ -190,4 +191,18 @@
   iframe {
     border: unset;
   }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  img,
+  video,
+  iframe,
+  svg {
+    max-width: 100%;
+  }
+
 }
