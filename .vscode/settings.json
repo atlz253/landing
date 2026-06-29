@@ -4,5 +4,19 @@
         "lightbox",
         "meowsonry",
         "rutube"
+    ],
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit",
+        "source.fixAll.stylelint": "explicit"
+    },
+    "eslint.format.enable": true,
+    "eslint.validate": [
+        "javascript",
+        "typescript",
+        "astro"
+    ],
+    "stylelint.validate": [
+        "css",
+        "astro"
     ]
 }

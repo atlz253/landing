@@ -12,6 +12,7 @@ const projects = (await getCollection("portfolio")).sort(
 <style>
   #portfolio {
     --portfolio-gap: var(--space-6);
+
     width: 100%;
     visibility: hidden;
   }
@@ -38,19 +39,19 @@ const projects = (await getCollection("portfolio")).sort(
     }
   }
 
-  @media (min-width: 720px) {
+  @media (width >= 720px) {
     .tile {
       width: calc((100% - var(--portfolio-gap)) / 2);
     }
   }
 
-  @media (min-width: 1440px) {
+  @media (width >= 1440px) {
     .tile {
       width: calc((100% - var(--portfolio-gap) * 3) / 3);
     }
   }
 
-  @media (min-width: 1680px) {
+  @media (width >= 1680px) {
     .tile {
       width: calc((100% - var(--portfolio-gap) * 4) / 4);
     }

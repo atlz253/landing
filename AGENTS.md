@@ -130,6 +130,13 @@ videos:
 2. Запустить сервер разработки: `npm start`
 3. Собрать для продакшена: `npm run build`
 
+### Линтинг
+
+- `npm run lint` — полная проверка ESLint + Stylelint
+- `npm run lint:fix` — автофикс ESLint + Stylelint
+- `npm run lint:js` — только ESLint
+- `npm run lint:css` — только Stylelint для `.css` и `.astro`
+
 ## Конфигурационные файлы
 
 - `astro.config.mjs`: Конфигурация Astro с настройками отзывчивых изображений и сервера
@@ -140,3 +147,5 @@ videos:
 - `src/components/Head.astro`: SEO-компонент с поддержкой динамического заголовка
 - `src/components/GlobalStyles/index.astro`: Централизованная дизайн-система (переменные, стили по умолчанию)
 - `package.json`: Зависимости проекта и скрипты
+- `eslint.config.ts`: Конфигурация ESLint (flat config с type-aware правилами TypeScript + Astro + jsx-a11y)
+- `stylelint.config.mjs`: Конфигурация Stylelint для CSS в `.css` и `<style>` блоках `.astro` файлов
