@@ -1,0 +1,848 @@
+---
+interface Track {
+  src: string[];
+  title?: string;
+}
+
+interface Props {
+  tracks: Track[];
+}
+
+import PlayIcon from "./assets/play.svg";
+import PauseIcon from "./assets/pause.svg";
+import PrevIcon from "./assets/prev.svg";
+import NextIcon from "./assets/next.svg";
+import DownloadIcon from "./assets/download.svg";
+import VolumeOnIcon from "./assets/volume-on.svg";
+import VolumeOffIcon from "./assets/volume-off.svg";
+
+const { tracks } = Astro.props;
+const tracksJson = JSON.stringify(tracks);
+---
+
+<style>
+  .audioPlayer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    border: 1px solid var(--color-grey-3);
+    border-radius: var(--space-4);
+    background-color: var(--color-grey-1);
+    box-shadow: var(--box-shadow-1);
+    max-width: var(--content-width-max);
+  }
+
+  .audioPlayer__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .audioPlayer__track {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    padding: var(--space-6);
+    border-radius: var(--space-3);
+    background-color: transparent;
+    transition: background-color var(--transition-duration-2) ease;
+  }
+
+  .audioPlayer__track[data-active] {
+    background-color: var(--color-grey-2);
+  }
+
+  .audioPlayer__playBtn {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: none;
+    border-radius: var(--space-9);
+    background-color: var(--color-blue-5);
+    color: var(--color-white);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color var(--transition-duration-1) ease,
+      transform var(--transition-duration-1) ease;
+  }
+
+  .audioPlayer__playBtn:hover {
+    background-color: var(--color-blue-6);
+  }
+
+  .audioPlayer__playBtn:active {
+    background-color: var(--color-blue-7);
+    transform: scale(0.95);
+  }
+
+  .audioPlayer__icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .audioPlayer__iconPause {
+    display: none;
+  }
+
+  .audioPlayer__track[data-active][data-playing] .audioPlayer__iconPlay {
+    display: none;
+  }
+
+  .audioPlayer__track[data-active][data-playing] .audioPlayer__iconPause {
+    display: block;
+  }
+
+  .audioPlayer__trackInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+
+  .audioPlayer__title {
+    font-size: var(--font-size-3);
+    line-height: var(--font-size-3-line-height);
+    color: var(--color-grey-9);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .audioPlayer__progress {
+    position: relative;
+    height: var(--space-1);
+    background-color: var(--color-grey-3);
+    border-radius: var(--space-9);
+    cursor: pointer;
+    overflow: hidden;
+    opacity: 0;
+    max-height: 0;
+    transition: opacity var(--transition-duration-2) ease,
+      max-height var(--transition-duration-2) ease;
+  }
+
+  .audioPlayer__track[data-active] .audioPlayer__progress {
+    opacity: 1;
+    max-height: var(--space-3);
+  }
+
+  .audioPlayer__progressFill {
+    position: absolute;
+    inset: 0;
+    width: 0%;
+    background-color: var(--color-blue-5);
+    border-radius: var(--space-9);
+    transition: width var(--transition-duration-1) linear;
+  }
+
+  .audioPlayer__time {
+    flex-shrink: 0;
+    font-size: var(--font-size-2);
+    line-height: var(--font-size-2-line-height);
+    color: var(--color-grey-7);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .audioPlayer__downloadBtn {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: var(--space-9);
+    background: none;
+    color: var(--color-grey-5);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color var(--transition-duration-1) ease;
+  }
+
+  .audioPlayer__downloadBtn:hover {
+    color: var(--color-blue-5);
+  }
+
+  .audioPlayer__downloadBtn .audioPlayer__icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .audioPlayer__controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-6) 0;
+  }
+
+  .audioPlayer__controlsMain {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .audioPlayer__controlBtn {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: var(--space-9);
+    background: none;
+    color: var(--color-grey-7);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color var(--transition-duration-1) ease,
+      background-color var(--transition-duration-1) ease;
+  }
+
+  .audioPlayer__controlBtn:hover {
+    color: var(--color-grey-9);
+  }
+
+  .audioPlayer__controlBtn .audioPlayer__icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .audioPlayer__globalPlayBtn {
+    width: 36px;
+    height: 36px;
+    background-color: var(--color-blue-5);
+    color: var(--color-white);
+  }
+
+  .audioPlayer__globalPlayBtn:hover {
+    background-color: var(--color-blue-6);
+    color: var(--color-white);
+  }
+
+  .audioPlayer__globalPlayBtn:active {
+    background-color: var(--color-blue-7);
+    transform: scale(0.95);
+  }
+
+  .audioPlayer__globalPlayBtn .audioPlayer__icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .audioPlayer__globalPauseIcon {
+    display: none;
+  }
+
+  .audioPlayer__controls[data-global-playing] .audioPlayer__globalPlayIcon {
+    display: none;
+  }
+
+  .audioPlayer__controls[data-global-playing] .audioPlayer__globalPauseIcon {
+    display: block;
+  }
+
+  .audioPlayer__volume {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .audioPlayer__muteBtn {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: var(--space-9);
+    background: none;
+    color: var(--color-grey-7);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color var(--transition-duration-1) ease;
+  }
+
+  .audioPlayer__muteBtn:hover {
+    color: var(--color-grey-9);
+  }
+
+  .audioPlayer__muteBtn .audioPlayer__icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .audioPlayer__iconVolumeOff {
+    display: none;
+  }
+
+  .audioPlayer__volume[data-muted] .audioPlayer__iconVolumeOn {
+    display: none;
+  }
+
+  .audioPlayer__volume[data-muted] .audioPlayer__iconVolumeOff {
+    display: block;
+  }
+
+  .audioPlayer__volumeBar {
+    width: 100px;
+    flex-shrink: 0;
+    position: relative;
+    height: var(--space-1);
+    background-color: var(--color-grey-3);
+    border-radius: var(--space-9);
+    cursor: pointer;
+    overflow: hidden;
+  }
+
+  .audioPlayer__volumeFill {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    background-color: var(--color-blue-5);
+    border-radius: var(--space-9);
+    transition: width var(--transition-duration-1) linear;
+  }
+
+  .audioPlayer__audio {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+</style>
+
+<div
+  class="audioPlayer"
+  data-audio-player
+  data-tracks={tracksJson}
+>
+  <ol class="audioPlayer__list">
+    {
+      tracks.map((track, index) => (
+        <li class="audioPlayer__track" data-track-index={index}>
+          <button
+            class="audioPlayer__playBtn"
+            data-play-btn
+            type="button"
+            aria-label="Воспроизвести"
+          >
+            <PlayIcon class="audioPlayer__icon audioPlayer__iconPlay" width={16} height={16} aria-hidden="true" />
+            <PauseIcon class="audioPlayer__icon audioPlayer__iconPause" width={16} height={16} aria-hidden="true" />
+          </button>
+          <div class="audioPlayer__trackInfo">
+            <span class="audioPlayer__title">{track.title ?? `Трек ${index + 1}`}</span>
+            <div class="audioPlayer__progress" data-progress>
+              <div class="audioPlayer__progressFill" data-progress-fill />
+            </div>
+          </div>
+          <span class="audioPlayer__time" data-time>--:--</span>
+          <button class="audioPlayer__downloadBtn" data-download-btn type="button" aria-label="Скачать">
+            <DownloadIcon class="audioPlayer__icon" width={18} height={18} aria-hidden="true" />
+          </button>
+        </li>
+      ))
+    }
+  </ol>
+  <div class="audioPlayer__controls" data-controls>
+    <div class="audioPlayer__controlsMain">
+      <button class="audioPlayer__controlBtn" data-prev-btn type="button" aria-label="Предыдущий трек">
+        <PrevIcon class="audioPlayer__icon" width={20} height={20} aria-hidden="true" />
+      </button>
+      <button class="audioPlayer__controlBtn audioPlayer__globalPlayBtn" data-global-play-btn type="button" aria-label="Воспроизвести">
+        <PlayIcon class="audioPlayer__icon audioPlayer__globalPlayIcon" width={18} height={18} aria-hidden="true" />
+        <PauseIcon class="audioPlayer__icon audioPlayer__globalPauseIcon" width={18} height={18} aria-hidden="true" />
+      </button>
+      <button class="audioPlayer__controlBtn" data-next-btn type="button" aria-label="Следующий трек">
+        <NextIcon class="audioPlayer__icon" width={20} height={20} aria-hidden="true" />
+      </button>
+    </div>
+    <div class="audioPlayer__volume" data-volume-control>
+      <button class="audioPlayer__muteBtn" data-mute-btn type="button" aria-label="Выключить звук">
+        <VolumeOnIcon class="audioPlayer__icon audioPlayer__iconVolumeOn" width={20} height={20} aria-hidden="true" />
+        <VolumeOffIcon class="audioPlayer__icon audioPlayer__iconVolumeOff" width={20} height={20} aria-hidden="true" />
+      </button>
+      <div class="audioPlayer__volumeBar" data-volume-bar>
+        <div class="audioPlayer__volumeFill" data-volume-fill />
+      </div>
+    </div>
+  </div>
+  <audio class="audioPlayer__audio" preload="metadata" data-audio-element>
+    <track kind="captions" />
+  </audio>
+</div>
+
+<script>
+  interface Track {
+    src: string[];
+    title?: string;
+  }
+
+  function getMimeType(url: string): string {
+    const ext = url.split(".").pop()?.toLowerCase();
+    const map: Record<string, string> = {
+      mp3: "audio/mpeg",
+      flac: "audio/flac",
+      wav: "audio/wav",
+      ogg: "audio/ogg",
+      opus: "audio/ogg",
+      m4a: "audio/mp4",
+      aac: "audio/aac",
+    };
+    return ext ? (map[ext] ?? "audio/mpeg") : "audio/mpeg";
+  }
+
+  let player: HTMLElement | null = null;
+  let audio: HTMLAudioElement | null = null;
+  let tracks: Track[] = [];
+  let currentIndex = -1;
+  let isPlaying = false;
+  let isSeeking = false;
+  let volume = 1;
+  let isMuted = false;
+  let isVolumeDragging = false;
+
+  function updateVolumeUI() {
+    if (!player) return;
+    const ctrl = player.querySelector<HTMLElement>("[data-volume-control]");
+    const fill = ctrl?.querySelector<HTMLElement>("[data-volume-fill]");
+    if (fill) fill.style.width = `${(isMuted ? 0 : volume) * 100}%`;
+    if (ctrl) {
+      if (isMuted) ctrl.setAttribute("data-muted", "");
+      else ctrl.removeAttribute("data-muted");
+    }
+    const btn = player.querySelector<HTMLButtonElement>("[data-mute-btn]");
+    if (btn) btn.setAttribute("aria-label", isMuted ? "Включить звук" : "Выключить звук");
+  }
+
+  function setVolume(level: number) {
+    volume = Math.max(0, Math.min(1, level));
+    if (audio) {
+      audio.volume = volume;
+      audio.muted = false;
+    }
+    isMuted = false;
+    updateVolumeUI();
+  }
+
+  function toggleMute() {
+    if (!audio) return;
+    audio.muted = !audio.muted;
+    isMuted = audio.muted;
+    updateVolumeUI();
+  }
+
+  function calcVolumeLevel(clientX: number): number {
+    const bar = player?.querySelector<HTMLElement>("[data-volume-bar]");
+    if (!bar) return 0;
+    const rect = bar.getBoundingClientRect();
+    return Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+  }
+
+  function handleVolumeBarMouseDown(e: MouseEvent) {
+    isVolumeDragging = true;
+    setVolume(calcVolumeLevel(e.clientX));
+    document.addEventListener("mousemove", handleVolumeMouseMove);
+    document.addEventListener("mouseup", handleVolumeMouseUp);
+  }
+
+  function handleVolumeMouseMove(e: MouseEvent) {
+    if (!isVolumeDragging) return;
+    const level = calcVolumeLevel(e.clientX);
+    const ctrl = player?.querySelector<HTMLElement>("[data-volume-control]");
+    const fill = ctrl?.querySelector<HTMLElement>("[data-volume-fill]");
+    if (fill) fill.style.width = `${level * 100}%`;
+  }
+
+  function handleVolumeMouseUp(e: MouseEvent) {
+    if (!isVolumeDragging) return;
+    isVolumeDragging = false;
+    setVolume(calcVolumeLevel(e.clientX));
+    document.removeEventListener("mousemove", handleVolumeMouseMove);
+    document.removeEventListener("mouseup", handleVolumeMouseUp);
+  }
+
+  function handleVolumeBarTouchMove(e: TouchEvent) {
+    const touch = e.touches[0];
+    if (!touch) return;
+    e.preventDefault();
+    const level = calcVolumeLevel(touch.clientX);
+    const ctrl = player?.querySelector<HTMLElement>("[data-volume-control]");
+    const fill = ctrl?.querySelector<HTMLElement>("[data-volume-fill]");
+    if (fill) fill.style.width = `${level * 100}%`;
+  }
+
+  function handleVolumeBarTouchEnd(e: TouchEvent) {
+    const touch = e.changedTouches[0];
+    if (!touch) return;
+    setVolume(calcVolumeLevel(touch.clientX));
+  }
+
+  function handleVolumeChange() {
+    if (!audio) return;
+    volume = audio.volume;
+    isMuted = audio.muted;
+    updateVolumeUI();
+  }
+
+  function handlePrevClick() {
+    if (currentIndex <= 0) return;
+    loadTrack(currentIndex - 1);
+    playCurrent();
+  }
+
+  function handleGlobalPlayClick() {
+    if (currentIndex < 0) {
+      loadTrack(0);
+      if (tracks.length > 0) playCurrent();
+      return;
+    }
+    if (isPlaying) {
+      pauseCurrent();
+    } else {
+      playCurrent();
+    }
+  }
+
+  function handleNextClick() {
+    if (currentIndex < 0 || currentIndex >= tracks.length - 1) return;
+    loadTrack(currentIndex + 1);
+    playCurrent();
+  }
+
+  function updateGlobalPlayUI() {
+    if (!player) return;
+    const ctrl = player.querySelector<HTMLElement>("[data-controls]");
+    if (!ctrl) return;
+    if (currentIndex >= 0 && isPlaying) {
+      ctrl.setAttribute("data-global-playing", "");
+    } else {
+      ctrl.removeAttribute("data-global-playing");
+    }
+    const btn = player.querySelector<HTMLButtonElement>("[data-global-play-btn]");
+    if (btn) {
+      btn.setAttribute("aria-label", isPlaying ? "Пауза" : "Воспроизвести");
+    }
+  }
+
+  function formatTime(seconds: number): string {
+    if (!isFinite(seconds) || isNaN(seconds) || seconds < 0) return "--:--";
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  }
+
+  function getTrackEl(index: number): HTMLElement | null {
+    if (!player) return null;
+    return player.querySelector<HTMLElement>(
+      `[data-track-index="${index}"]`,
+    );
+  }
+
+  function updateUI() {
+    if (!player) return;
+    player
+      .querySelectorAll<HTMLElement>("[data-track-index]")
+      .forEach((el) => {
+        const idx = Number(el.getAttribute("data-track-index"));
+        const isActive = idx === currentIndex;
+        if (isActive) {
+          el.setAttribute("data-active", "");
+        } else {
+          el.removeAttribute("data-active");
+        }
+        if (isActive && isPlaying) {
+          el.setAttribute("data-playing", "");
+        } else {
+          el.removeAttribute("data-playing");
+        }
+        const playBtn = el.querySelector<HTMLButtonElement>("[data-play-btn]");
+        if (playBtn) {
+          playBtn.setAttribute(
+            "aria-label",
+            isActive && isPlaying ? "Пауза" : "Воспроизвести",
+          );
+        }
+      });
+    updateGlobalPlayUI();
+  }
+
+  function updateProgress() {
+    if (!audio || currentIndex < 0) return;
+    const trackEl = getTrackEl(currentIndex);
+    if (!trackEl) return;
+    const fill = trackEl.querySelector<HTMLElement>("[data-progress-fill]");
+    const timeEl = trackEl.querySelector<HTMLElement>("[data-time]");
+    const percent = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+    if (fill) fill.style.width = `${percent}%`;
+    if (timeEl) {
+      timeEl.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+    }
+  }
+
+  function setDurationDisplay(index: number, duration: number) {
+    const trackEl = getTrackEl(index);
+    if (!trackEl) return;
+    const timeEl = trackEl.querySelector<HTMLElement>("[data-time]");
+    if (timeEl && !(index === currentIndex && isPlaying)) {
+      timeEl.textContent = formatTime(duration);
+    }
+  }
+
+  function loadTrack(index: number) {
+    if (!audio || index < 0 || index >= tracks.length) return;
+    currentIndex = index;
+    audio.querySelectorAll("source").forEach((s) => s.remove());
+    tracks[index].src.forEach((srcUrl) => {
+      const source = document.createElement("source");
+      source.src = srcUrl;
+      source.type = getMimeType(srcUrl);
+      audio!.appendChild(source);
+    });
+    audio.load();
+    updateUI();
+  }
+
+  function playCurrent() {
+    if (!audio || currentIndex < 0) return;
+    void audio.play();
+  }
+
+  function pauseCurrent() {
+    audio?.pause();
+  }
+
+  function togglePlay(index: number) {
+    if (index === currentIndex && isPlaying) {
+      pauseCurrent();
+      return;
+    }
+    if (index !== currentIndex) {
+      loadTrack(index);
+    }
+    playCurrent();
+  }
+
+  function next() {
+    if (currentIndex + 1 < tracks.length) {
+      loadTrack(currentIndex + 1);
+      playCurrent();
+    } else {
+      isPlaying = false;
+      updateUI();
+    }
+  }
+
+  function seekTo(percent: number) {
+    if (!audio || currentIndex < 0 || !audio.duration) return;
+    isSeeking = true;
+    audio.currentTime = Math.max(0, Math.min(percent, 1)) * audio.duration;
+    updateProgress();
+    requestAnimationFrame(() => {
+      isSeeking = false;
+    });
+  }
+
+  function handlePlayBtnClick(e: Event) {
+    const btn = e.currentTarget as HTMLButtonElement;
+    const trackEl = btn.closest<HTMLElement>("[data-track-index]");
+    if (!trackEl) return;
+    const idx = Number(trackEl.getAttribute("data-track-index"));
+    togglePlay(idx);
+  }
+
+  function handleDownloadClick(e: Event) {
+    const btn = e.currentTarget as HTMLButtonElement;
+    const trackEl = btn.closest<HTMLElement>("[data-track-index]");
+    if (!trackEl) return;
+    const idx = Number(trackEl.getAttribute("data-track-index"));
+    const track = tracks[idx];
+    if (!track || track.src.length === 0) return;
+    const srcUrl = new URL(track.src[0], window.location.origin);
+    const pathParts = srcUrl.pathname.split(".");
+    const ext = pathParts.pop() ?? "";
+    const name = track.title ?? `track_${idx + 1}`;
+    const a = document.createElement("a");
+    a.href = track.src[0];
+    a.download = `${name}.${ext}`;
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  function handleProgressInteraction(
+    e: MouseEvent | TouchEvent,
+  ): number | null {
+    const target = e.currentTarget as HTMLElement;
+    const trackEl = target.closest<HTMLElement>("[data-track-index]");
+    if (!trackEl) return null;
+    const idx = Number(trackEl.getAttribute("data-track-index"));
+    if (idx !== currentIndex) return null;
+    const rect = target.getBoundingClientRect();
+    let clientX: number;
+    if ("touches" in e && e.touches.length > 0) {
+      clientX = e.touches[0].clientX;
+    } else if ("clientX" in e) {
+      clientX = e.clientX;
+    } else {
+      return null;
+    }
+    const percent = (clientX - rect.left) / rect.width;
+    return percent;
+  }
+
+  function handleProgressClick(e: MouseEvent) {
+    const percent = handleProgressInteraction(e);
+    if (percent === null) return;
+    seekTo(percent);
+  }
+
+  function handleProgressTouchMove(e: TouchEvent) {
+    const percent = handleProgressInteraction(e);
+    if (percent === null) return;
+    e.preventDefault();
+    if (!audio || !audio.duration) return;
+    const trackEl = getTrackEl(currentIndex);
+    if (!trackEl) return;
+    const fill = trackEl.querySelector<HTMLElement>("[data-progress-fill]");
+    if (fill) fill.style.width = `${Math.max(0, Math.min(percent, 1)) * 100}%`;
+  }
+
+  function handleProgressTouchEnd(e: TouchEvent) {
+    const percent = handleProgressInteraction(e);
+    if (percent === null) return;
+    seekTo(percent);
+  }
+
+  function handlePlay() {
+    isPlaying = true;
+    updateUI();
+  }
+
+  function handlePause() {
+    isPlaying = false;
+    updateUI();
+  }
+
+  function handleTimeUpdate() {
+    if (isSeeking) return;
+    updateProgress();
+  }
+
+  function handleLoadedMetadata() {
+    if (!audio) return;
+    setDurationDisplay(currentIndex, audio.duration);
+    updateProgress();
+  }
+
+  function handleEnded() {
+    next();
+  }
+
+  function init() {
+    player = document.querySelector<HTMLElement>("[data-audio-player]");
+    if (!player) return;
+    audio = player.querySelector<HTMLAudioElement>("[data-audio-element]");
+    if (!audio) return;
+    const raw = player.getAttribute("data-tracks");
+    if (raw) {
+      try {
+        tracks = JSON.parse(raw);
+      } catch {
+        tracks = [];
+      }
+    }
+    if (tracks.length === 0) return;
+
+    volume = audio.volume || 1;
+    isMuted = audio.muted || false;
+    updateVolumeUI();
+
+    audio.addEventListener("play", handlePlay);
+    audio.addEventListener("pause", handlePause);
+    audio.addEventListener("timeupdate", handleTimeUpdate);
+    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+    audio.addEventListener("ended", handleEnded);
+    audio.addEventListener("volumechange", handleVolumeChange);
+
+    player.querySelectorAll<HTMLButtonElement>("[data-play-btn]").forEach((btn) => {
+      btn.addEventListener("click", handlePlayBtnClick);
+    });
+
+    player.querySelectorAll<HTMLButtonElement>("[data-download-btn]").forEach((btn) => {
+      btn.addEventListener("click", handleDownloadClick);
+    });
+
+    player.querySelectorAll<HTMLElement>("[data-progress]").forEach((bar) => {
+      bar.addEventListener("click", handleProgressClick);
+      bar.addEventListener("touchmove", handleProgressTouchMove, { passive: false });
+      bar.addEventListener("touchend", handleProgressTouchEnd, { passive: true });
+    });
+
+    player.querySelector<HTMLButtonElement>("[data-prev-btn]")?.addEventListener("click", handlePrevClick);
+    player.querySelector<HTMLButtonElement>("[data-global-play-btn]")?.addEventListener("click", handleGlobalPlayClick);
+    player.querySelector<HTMLButtonElement>("[data-next-btn]")?.addEventListener("click", handleNextClick);
+    player.querySelector<HTMLButtonElement>("[data-mute-btn]")?.addEventListener("click", toggleMute);
+    player.querySelectorAll<HTMLElement>("[data-volume-bar]").forEach((bar) => {
+      bar.addEventListener("mousedown", handleVolumeBarMouseDown);
+      bar.addEventListener("touchmove", handleVolumeBarTouchMove, { passive: false });
+      bar.addEventListener("touchend", handleVolumeBarTouchEnd, { passive: true });
+    });
+  }
+
+  function destroy() {
+    if (audio) {
+      audio.removeEventListener("play", handlePlay);
+      audio.removeEventListener("pause", handlePause);
+      audio.removeEventListener("timeupdate", handleTimeUpdate);
+      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      audio.removeEventListener("ended", handleEnded);
+      audio.removeEventListener("volumechange", handleVolumeChange);
+      audio.pause();
+      audio.querySelectorAll("source").forEach((s) => s.remove());
+      audio.load();
+    }
+    player?.querySelectorAll<HTMLButtonElement>("[data-play-btn]").forEach((btn) => {
+      btn.removeEventListener("click", handlePlayBtnClick);
+    });
+    player?.querySelectorAll<HTMLButtonElement>("[data-download-btn]").forEach((btn) => {
+      btn.removeEventListener("click", handleDownloadClick);
+    });
+    player?.querySelectorAll<HTMLElement>("[data-progress]").forEach((bar) => {
+      bar.removeEventListener("click", handleProgressClick);
+      bar.removeEventListener("touchmove", handleProgressTouchMove);
+      bar.removeEventListener("touchend", handleProgressTouchEnd);
+    });
+    document.removeEventListener("mousemove", handleVolumeMouseMove);
+    document.removeEventListener("mouseup", handleVolumeMouseUp);
+    player?.querySelector<HTMLButtonElement>("[data-prev-btn]")?.removeEventListener("click", handlePrevClick);
+    player?.querySelector<HTMLButtonElement>("[data-global-play-btn]")?.removeEventListener("click", handleGlobalPlayClick);
+    player?.querySelector<HTMLButtonElement>("[data-next-btn]")?.removeEventListener("click", handleNextClick);
+    player?.querySelector<HTMLButtonElement>("[data-mute-btn]")?.removeEventListener("click", toggleMute);
+    player?.querySelectorAll<HTMLElement>("[data-volume-bar]").forEach((bar) => {
+      bar.removeEventListener("mousedown", handleVolumeBarMouseDown);
+      bar.removeEventListener("touchmove", handleVolumeBarTouchMove);
+      bar.removeEventListener("touchend", handleVolumeBarTouchEnd);
+    });
+    currentIndex = -1;
+    isPlaying = false;
+    isSeeking = false;
+    isVolumeDragging = false;
+  }
+
+  document.addEventListener("astro:page-load", init);
+  document.addEventListener("astro:before-preparation", () => {
+    destroy();
+  });
+</script>

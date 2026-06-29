@@ -6,6 +6,14 @@ export const newsSchema = z.object({
   images: z.array(z.string()).optional(),
   yandexVideos: z.array(z.string()).optional(),
   vkVideos: z.array(z.string()).optional(),
+  audio: z
+    .array(
+      z.object({
+        src: z.array(z.string()),
+        title: z.string().optional(),
+      }),
+    )
+    .optional(),
   previewType: z.enum(["images", "yandexVideos", "text"]).optional(),
 });
 
