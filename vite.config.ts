@@ -1,7 +1,6 @@
 import { defineConfig } from "vite";
 import simpleHtmlPlugin from "vite-plugin-simple-html";
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 export default defineConfig({
   build: {
     minify: "terser",
@@ -9,7 +8,6 @@ export default defineConfig({
     cssMinify: true,
   },
   plugins: [
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     simpleHtmlPlugin({
       minify: {
         collapseWhitespaces: "all",
