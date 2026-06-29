@@ -21,11 +21,27 @@ const logoSize = 36;
   .link > svg:hover {
     scale: 1.1;
   }
+
+  .link--github {
+    display: inline-flex;
+    border-radius: 50%;
+    background-color: var(--color-bg-elevated);
+    color: var(--color-text-primary);
+    transition: scale var(--transition-duration-2);
+  }
+
+  .link--github > svg {
+    display: block;
+  }
+
+  .link--github:hover {
+    scale: 1.1;
+  }
 </style>
 
 <ul class="links">
   <li>
-    <a href="https://github.com/atlz253" title="GitHub" class="link"
+     <a href="https://github.com/atlz253" title="GitHub" class="link link--github"
       ><GitHubLogo width={logoSize} height={logoSize} /></a
     >
   </li>

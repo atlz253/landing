@@ -26,9 +26,9 @@ const tracksJson = JSON.stringify(tracks);
     flex-direction: column;
     gap: var(--space-2);
     padding: var(--space-4);
-    border: 1px solid var(--color-grey-3);
+    border: 1px solid var(--color-border);
     border-radius: var(--space-4);
-    background-color: var(--color-grey-1);
+    background-color: var(--color-bg-elevated);
     box-shadow: var(--box-shadow-1);
     max-width: var(--content-width-max);
   }
@@ -53,7 +53,7 @@ const tracksJson = JSON.stringify(tracks);
   }
 
   .audioPlayer__track[data-active] {
-    background-color: var(--color-grey-2);
+    background-color: var(--color-bg-hover);
   }
 
   .audioPlayer__playBtn {
@@ -66,7 +66,7 @@ const tracksJson = JSON.stringify(tracks);
     border: none;
     border-radius: var(--space-9);
     background-color: var(--color-blue-5);
-    color: var(--color-white);
+    color: var(--color-on-accent);
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     transition: background-color var(--transition-duration-1) ease,
@@ -110,7 +110,7 @@ const tracksJson = JSON.stringify(tracks);
   .audioPlayer__title {
     font-size: var(--font-size-3);
     line-height: var(--font-size-3-line-height);
-    color: var(--color-grey-9);
+    color: var(--color-text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -147,7 +147,7 @@ const tracksJson = JSON.stringify(tracks);
     flex-shrink: 0;
     font-size: var(--font-size-2);
     line-height: var(--font-size-2-line-height);
-    color: var(--color-grey-7);
+    color: var(--color-text-secondary);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
@@ -162,14 +162,14 @@ const tracksJson = JSON.stringify(tracks);
     border: none;
     border-radius: var(--space-9);
     background: none;
-    color: var(--color-grey-5);
+    color: var(--color-text-secondary);
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     transition: color var(--transition-duration-1) ease;
   }
 
   .audioPlayer__downloadBtn:hover {
-    color: var(--color-blue-5);
+    color: var(--color-link);
   }
 
   .audioPlayer__downloadBtn .audioPlayer__icon {
@@ -200,7 +200,7 @@ const tracksJson = JSON.stringify(tracks);
     border: none;
     border-radius: var(--space-9);
     background: none;
-    color: var(--color-grey-7);
+    color: var(--color-text-secondary);
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     transition: color var(--transition-duration-1) ease,
@@ -208,7 +208,7 @@ const tracksJson = JSON.stringify(tracks);
   }
 
   .audioPlayer__controlBtn:hover {
-    color: var(--color-grey-9);
+    color: var(--color-text-primary);
   }
 
   .audioPlayer__controlBtn .audioPlayer__icon {
@@ -220,12 +220,12 @@ const tracksJson = JSON.stringify(tracks);
     width: 36px;
     height: 36px;
     background-color: var(--color-blue-5);
-    color: var(--color-white);
+    color: var(--color-on-accent);
   }
 
   .audioPlayer__globalPlayBtn:hover {
     background-color: var(--color-blue-6);
-    color: var(--color-white);
+    color: var(--color-on-accent);
   }
 
   .audioPlayer__globalPlayBtn:active {
@@ -266,14 +266,14 @@ const tracksJson = JSON.stringify(tracks);
     border: none;
     border-radius: var(--space-9);
     background: none;
-    color: var(--color-grey-7);
+    color: var(--color-text-secondary);
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     transition: color var(--transition-duration-1) ease;
   }
 
   .audioPlayer__muteBtn:hover {
-    color: var(--color-grey-9);
+    color: var(--color-text-primary);
   }
 
   .audioPlayer__muteBtn .audioPlayer__icon {

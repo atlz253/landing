@@ -105,6 +105,36 @@
 
     /* Ширина контента */
     --content-width-max: 1440px;
+
+    /* Семантические токены — светлая тема */
+    --color-bg: var(--color-white);
+    --color-bg-elevated: var(--color-grey-1);
+    --color-bg-hover: rgba(0, 0, 0, 0.05);
+    --color-text-primary: var(--color-black);
+    --color-text-secondary: var(--color-grey-8);
+    --color-border: var(--color-grey-3);
+    --color-link: var(--color-blue-5);
+    --color-link-hover: var(--color-blue-7);
+    --color-on-accent: var(--color-white);
+  }
+
+  [data-theme="dark"] {
+    /* Семантические токены — тёмная тема */
+    --color-bg: var(--color-grey-10);
+    --color-bg-elevated: var(--color-grey-9);
+    --color-bg-hover: rgba(255, 255, 255, 0.08);
+    --color-text-primary: var(--color-grey-1);
+    --color-text-secondary: var(--color-grey-4);
+    --color-border: var(--color-grey-8);
+    --color-link: var(--color-blue-3);
+    --color-link-hover: var(--color-blue-1);
+    --color-on-accent: var(--color-white);
+
+    /* Тени — более заметные на тёмном фоне */
+    --box-shadow-1: 0 2px 4px rgba(0, 0, 0, 0.4);
+    --box-shadow-2: 0 2px 8px rgba(0, 0, 0, 0.4);
+    --box-shadow-3: 0 4px 12px rgba(0, 0, 0, 0.5);
+    --box-shadow-4: 0 8px 24px rgba(0, 0, 0, 0.6);
   }
 
   body,
@@ -122,7 +152,7 @@
 
   body,
   small {
-    color: var(--color-black);
+    color: var(--color-text-primary);
   }
 
   p,
@@ -139,7 +169,9 @@
   }
 
   body {
-    background-color: var(--color-white);
+    background-color: var(--color-bg);
+    transition: background-color var(--transition-duration-3) ease,
+                color var(--transition-duration-3) ease;
   }
 
   ul,
@@ -159,11 +191,11 @@
 
   a {
     text-decoration: none;
-    color: var(--color-blue-5);
+    color: var(--color-link);
   }
 
   a:hover {
-    color: var(--color-blue-7);
+    color: var(--color-link-hover);
   }
 
   h1 {

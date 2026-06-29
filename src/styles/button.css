@@ -7,7 +7,7 @@
   }
 
   .button {
-    --button-color: var(--color-white);
+    --button-color: var(--color-on-accent);
     --button-background-color: var(--color-blue-5);
 
     cursor: pointer;
