@@ -8,6 +8,7 @@ import ButtonLink from "../../ui/components/ButtonLink/index.astro";
 import { getPortfolioImage } from "../../features/viewPortfolio/collections/portfolio/getPortfolioImage";
 import Lightbox from "../../components/Lightbox/index.astro";
 import FullscreenIframe from "../../features/viewPortfolio/components/FullscreenIframe/index.astro";
+import TechnologyChips from "../../features/viewPortfolio/components/TechnologyChips/index.astro";
 
 const { projectId } = Astro.params;
 
@@ -95,6 +96,11 @@ const lightboxImages = project.data.images
     <div class="contentWrapper">
       <div class="content" data-portfolio-content>
         <h1>{project.data.title}</h1>
+        {
+          project.data.technologies && (
+            <TechnologyChips technologies={project.data.technologies} />
+          )
+        }
         {
           project.data.href && (
             <div class="actions">

@@ -8,6 +8,7 @@ import Link from "../../Link.astro";
 import PrettyParagraph from "../../PrettyParagraph.astro";
 import ButtonLink from "../../../ui/components/ButtonLink/index.astro";
 import { getPortfolioImage } from "../../../features/viewPortfolio/collections/portfolio/getPortfolioImage";
+import TechnologyChips from "../../../features/viewPortfolio/components/TechnologyChips/index.astro";
 
 interface Props {
   project: CollectionEntry<"portfolio">;
@@ -79,6 +80,9 @@ const previewImage = project.data.images?.[0];
 <div class:list={["portfolioCardWrapper", className]} {...rest}>
   <Card class="portfolioCard">
     <h2>{project.data.title}</h2>
+    {project.data.technologies && (
+      <TechnologyChips technologies={project.data.technologies} limit={5} />
+    )}
     {
       previewImage && (
         <Image

@@ -4,6 +4,15 @@ date: 2025-06-14
 href: "https://github.com/atlz253/serverless-test-platform"
 description:
   - "Система для исследования serverless архитектуры в экосистеме Yandex Cloud"
+technologies:
+  - typescript
+  - fastify
+  - yandex-cloud
+  - mongodb
+  - terraform
+  - docker
+  - vitest
+  - k6
 ---
 
 Экспериментальная backend-система для исследования serverless-подхода на базе Yandex Cloud. Проект собирает события пользовательской активности, сохраняет их в MongoDB, формирует аналитические отчеты по пользователям и типам событий, а также создает ZIP-архивы с выгрузкой данных.

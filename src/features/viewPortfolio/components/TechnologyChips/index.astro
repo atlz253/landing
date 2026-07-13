@@ -1,0 +1,57 @@
+---
+import { getTechnology } from "../../technologies";
+
+interface Props {
+  technologies: string[];
+  limit?: number;
+}
+
+const { technologies, limit } = Astro.props;
+const visibleTechnologies =
+  limit === undefined ? technologies : technologies.slice(0, limit);
+---
+
+<style>
+  @layer ui {
+    .technologyChips {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 0;
+      padding: 0;
+      gap: var(--space-3);
+      list-style: none;
+    }
+
+    .technologyChips__item {
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--space-9);
+      background-color: var(--technology-chip-bg, var(--technology-neutral-bg));
+      color: var(--technology-chip-text, var(--technology-neutral-text));
+      font-size: var(--font-size-1);
+      font-weight: 500;
+      line-height: var(--font-size-2-line-height);
+    }
+  }
+</style>
+
+{
+  visibleTechnologies.length > 0 && (
+    <ul class="technologyChips" aria-label="Используемые технологии">
+      {visibleTechnologies.map((id) => {
+        const technology = getTechnology(id);
+
+        return (
+          <li
+            class="technologyChips__item"
+            style={
+              technology &&
+              `--technology-chip-bg: var(--technology-${id}-bg); --technology-chip-text: var(--technology-${id}-text);`
+            }
+          >
+            {technology?.label ?? id}
+          </li>
+        );
+      })}
+    </ul>
+  )
+}

@@ -6,6 +6,9 @@ images:
   - /collections/portfolio/csheroes.png
 description:
   - "Игра, вдохновленная серией игр «Heroes of Might and Magic»"
+technologies:
+  - cs
+  - webassembly
 ---
 
 Игра, вдохновленная серией игр «Heroes of Might and Magic». Курсовая работа второго курса по дисциплине «Разработка на ЯВУ».

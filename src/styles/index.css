@@ -67,6 +67,116 @@
     --color-blue-2: #cdd5f4;
     --color-blue-1: #dee3f7;
 
+    /* Зелёная цветовая палитра — используется для успешных состояний и подтверждений */
+    --color-green-10: #0b3d2e;
+    --color-green-9: #0f5b43;
+    --color-green-8: #137a58;
+    --color-green-7: #169b6a;
+    --color-green-6: #20b879;
+    --color-green-5: #45c98f;
+    --color-green-4: #6dd8a7;
+    --color-green-3: #97e5bf;
+    --color-green-2: #c0f0d7;
+    --color-green-1: #e1f8eb;
+
+    /* Фиолетовая цветовая палитра — используется для дополнительных акцентов */
+    --color-purple-10: #2e1065;
+    --color-purple-9: #4c1d95;
+    --color-purple-8: #5b21b6;
+    --color-purple-7: #6d28d9;
+    --color-purple-6: #7c3aed;
+    --color-purple-5: #8b5cf6;
+    --color-purple-4: #a78bfa;
+    --color-purple-3: #c4b5fd;
+    --color-purple-2: #ddd6fe;
+    --color-purple-1: #ede9fe;
+
+    /* Цвета технологий для чипсов и будущей фильтрации */
+    --technology-neutral-bg: var(--color-grey-2);
+    --technology-neutral-text: var(--color-grey-10);
+    --technology-javascript-bg: var(--color-yellow-6);
+    --technology-javascript-text: var(--color-black);
+    --technology-typescript-bg: var(--color-blue-5);
+    --technology-typescript-text: var(--color-white);
+    --technology-react-bg: var(--color-blue-4);
+    --technology-react-text: var(--color-white);
+    --technology-astro-bg: var(--color-red-7);
+    --technology-astro-text: var(--color-white);
+    --technology-nodejs-bg: var(--color-green-8);
+    --technology-nodejs-text: var(--color-white);
+    --technology-c-bg: var(--color-blue-7);
+    --technology-c-text: var(--color-white);
+    --technology-flex-bg: var(--technology-c-bg);
+    --technology-flex-text: var(--technology-c-text);
+    --technology-bison-bg: var(--technology-c-bg);
+    --technology-bison-text: var(--technology-c-text);
+    --technology-make-bg: var(--technology-c-bg);
+    --technology-make-text: var(--technology-c-text);
+    --technology-webassembly-bg: var(--color-blue-8);
+    --technology-webassembly-text: var(--color-white);
+    --technology-fastapi-bg: var(--color-green-5);
+    --technology-fastapi-text: var(--color-white);
+    --technology-fastify-bg: var(--color-grey-10);
+    --technology-fastify-text: var(--color-white);
+    --technology-postgresql-bg: var(--color-blue-8);
+    --technology-postgresql-text: var(--color-white);
+    --technology-python-bg: var(--color-yellow-8);
+    --technology-python-text: var(--color-black);
+    --technology-grpc-bg: var(--color-blue-3);
+    --technology-grpc-text: var(--color-blue-10);
+    --technology-socketio-bg: var(--color-grey-7);
+    --technology-socketio-text: var(--color-white);
+    --technology-docker-bg: var(--color-blue-4);
+    --technology-docker-text: var(--color-white);
+    --technology-prometheus-bg: var(--color-red-5);
+    --technology-prometheus-text: var(--color-black);
+    --technology-grafana-bg: var(--color-yellow-8);
+    --technology-grafana-text: var(--color-black);
+    --technology-k6-bg: var(--color-red-8);
+    --technology-k6-text: var(--color-white);
+    --technology-mongodb-bg: var(--color-green-6);
+    --technology-mongodb-text: var(--color-blue-9);
+    --technology-terraform-bg: var(--color-blue-9);
+    --technology-terraform-text: var(--color-white);
+    --technology-vitest-bg: var(--color-yellow-7);
+    --technology-vitest-text: var(--color-black);
+    --technology-testing-library-bg: var(--color-red-4);
+    --technology-testing-library-text: var(--color-black);
+    --technology-redux-toolkit-bg: var(--color-blue-6);
+    --technology-redux-toolkit-text: var(--color-white);
+    --technology-ant-design-bg: var(--color-red-9);
+    --technology-ant-design-text: var(--color-white);
+    --technology-react-bootstrap-bg: var(--color-blue-1);
+    --technology-react-bootstrap-text: var(--color-blue-10);
+    --technology-yandex-cloud-bg: var(--color-blue-4);
+    --technology-yandex-cloud-text: var(--color-white);
+    --technology-github-actions-bg: var(--color-grey-8);
+    --technology-github-actions-text: var(--color-white);
+    --technology-tanstack-start-bg: var(--color-blue-5);
+    --technology-tanstack-start-text: var(--color-white);
+    --technology-prisma-orm-bg: var(--color-grey-2);
+    --technology-prisma-orm-text: var(--color-blue-5);
+    --technology-mantine-bg: var(--color-blue-4);
+    --technology-mantine-text: var(--color-white);
+    --technology-paraglide-bg: var(--color-red-8);
+    --technology-paraglide-text: var(--color-yellow-5);
+    --technology-playwright-bg: var(--color-green-8);
+    --technology-playwright-text: var(--color-white);
+    --technology-vite-bg: var(--color-purple-7);
+    --technology-vite-text: var(--color-yellow-8);
+    --technology-cs-bg: var(--color-purple-5);
+    --technology-cs-text: var(--color-white);
+    --technology-cpp-bg: var(--technology-c-bg);
+    --technology-cpp-text: var(--technology-c-text);
+    --technology-html-bg: var(--color-red-5);
+    --technology-html-text: var(--color-white);
+    --technology-css-bg: var(--color-blue-5);
+    --technology-css-text: var(--color-white);
+    --technology-firebase-bg: var(--color-red-5);
+    --technology-firebase-text: var(--color-white);
+    --technology-sdl2-bg: var(--technology-c-bg);
+    --technology-sdl2-text: var(--technology-c-text);
+
     /* Шкала теней для создания глубины и визуальной иерархии */
     --box-shadow-1: 0 2px 4px rgba(0, 0, 0, 0.1);
     --box-shadow-2: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -170,8 +280,9 @@
 
   body {
     background-color: var(--color-bg);
-    transition: background-color var(--transition-duration-3) ease,
-                color var(--transition-duration-3) ease;
+    transition:
+      background-color var(--transition-duration-3) ease,
+      color var(--transition-duration-3) ease;
   }
 
   ul,
@@ -236,5 +347,4 @@
   svg {
     max-width: 100%;
   }
-
 }

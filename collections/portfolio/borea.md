@@ -6,6 +6,15 @@ images:
   - /collections/portfolio/borea.png
 description:
   - "Ваша собственная исследовательская станция для разработки программного обеспечения"
+technologies:
+  - tanstack-start
+  - prisma-orm
+  - mantine
+  - paraglide
+  - react
+  - vitest
+  - playwright
+  - vite
 ---
 
 Borea - open source рабочее пространство для разработки программного обеспечения, вдохновленное JetBrains Space и Yandex SourceCraft.

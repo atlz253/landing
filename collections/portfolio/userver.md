@@ -4,6 +4,11 @@ date: 2023-07-01
 href: "https://userver.tech/"
 images:
   - /collections/portfolio/userver.png
+technologies:
+  - html
+  - css
+  - javascript
+  - firebase
 ---
 
 Работал над стартовой страницей документации userver: помогал сделать первый экран понятнее, привести блоки к более аккуратной визуальной иерархии и улучшить восприятие проекта для новых пользователей.

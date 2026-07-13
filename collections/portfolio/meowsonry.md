@@ -6,6 +6,10 @@ images:
   - /collections/portfolio/meowsonry.png
 description:
   - "Библиотека для построения masonry layout"
+technologies:
+  - typescript
+  - playwright
+  - vitest
 ---
 
 Meowsonry - небольшая библиотека для построения masonry layout без привязки к конкретному UI-фреймворку.

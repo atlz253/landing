@@ -7,6 +7,7 @@ export const projectSchema = z.object({
   date: z.coerce.date(),
   href: z.string().url().optional(),
   description: z.union([z.string(), z.array(z.string())]).optional(),
+  technologies: z.array(z.string()).optional(),
   images: z.array(z.string()).optional(),
   items: z
     .array(

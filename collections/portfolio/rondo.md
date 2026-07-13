@@ -6,6 +6,9 @@ images:
   - /collections/portfolio/rondo.png
 description:
   - "Комплект программного обеспечения для обучения и использования нейронной сети по распознаванию символов ZX Spectrum, разработанный мной с нуля"
+technologies:
+  - cpp
+  - webassembly
 ---
 
 Rondo neuronet project - набор программ для распознавания символов ZX Spectrum. В проекте с нуля реализованы подготовка данных, обучение и запуск распознавания.

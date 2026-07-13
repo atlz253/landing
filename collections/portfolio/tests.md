@@ -1,6 +1,14 @@
 ---
 title: "Выполненные тестовые задания по frontend"
 date: 2024-06-21
+technologies:
+  - react
+  - redux-toolkit
+  - vitest
+  - testing-library
+  - ant-design
+  - postgresql
+  - react-bootstrap
 images:
   - /collections/portfolio/gameWatch.png
   - /collections/portfolio/audioDealer.png
