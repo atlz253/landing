@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
 
 test("audio player ranges support keyboard interaction", async ({ page, browserName }) => {
   await page.route(/https:\/\/runtime\.video\.cloud\.yandex\.net\//, (route) =>
@@ -17,6 +18,11 @@ test("audio player ranges support keyboard interaction", async ({ page, browserN
 
   const progress = page.locator("[data-progress]");
   await expect(progress).toHaveAttribute("type", "range");
+
+  const accessibility = await new AxeBuilder({ page })
+    .include("[data-audio-player]")
+    .analyze();
+  expect(accessibility.violations).toEqual([]);
 
   if (browserName !== "webkit") {
     await page.locator("[data-global-play-btn]").click();

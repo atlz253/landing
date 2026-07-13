@@ -158,6 +158,7 @@ const isCurrentPage = (href: string) =>
     const next = current === 'dark' ? 'light' : 'dark';
     html.setAttribute('data-theme', next);
     localStorage.setItem('theme', next);
+    updateButtonUI();
   }
 
   function updateButtonUI() {
