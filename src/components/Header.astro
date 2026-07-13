@@ -1,5 +1,9 @@
 ---
 import Link from "./Link.astro";
+
+const { pathname } = Astro.url;
+const isCurrentPage = (href: string) =>
+  href === "/" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
 ---
 
 <style>
@@ -52,6 +56,11 @@ import Link from "./Link.astro";
     font-weight: bold;
   }
 
+  .nav-link:focus-visible {
+    outline: 2px solid var(--color-control-focus);
+    outline-offset: var(--space-2);
+  }
+
   .theme-toggle {
     position: absolute;
     right: var(--space-6);
@@ -76,6 +85,11 @@ import Link from "./Link.astro";
     background-color: var(--color-bg-hover);
   }
 
+  .theme-toggle:focus-visible {
+    outline: 2px solid var(--color-control-focus);
+    outline-offset: var(--space-2);
+  }
+
   .theme-toggle-icon {
     width: 20px;
     height: 20px;
@@ -92,13 +106,39 @@ import Link from "./Link.astro";
   :global([data-theme="dark"]) .theme-toggle-icon--sun {
     display: block;
   }
+
+  @media (width <= 520px) {
+    .header {
+      padding-inline: var(--space-4);
+    }
+
+    .nav-container {
+      padding-right: calc(32px + var(--space-5));
+    }
+
+    .nav {
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: var(--space-2);
+    }
+
+    .nav-link {
+      padding: var(--space-2);
+      font-size: var(--font-size-2);
+    }
+
+    .theme-toggle {
+      right: var(--space-4);
+    }
+  }
 </style>
 
 <header class="header">
   <div class="nav-container">
-    <nav class="nav">
-      <Link href="/" class="nav-link">Главная</Link>
-      <Link href="/music" class="nav-link">Музыка</Link>
+    <nav class="nav" aria-label="Основная навигация">
+      <Link href="/" class="nav-link" aria-current={isCurrentPage("/") ? "page" : undefined}>Главная</Link>
+      <Link href="/music" class="nav-link" aria-current={isCurrentPage("/music") ? "page" : undefined}>Музыка</Link>
       <Link
         href="https://my-digital-garden-sand-delta.vercel.app/"
         class="nav-link">База знаний</Link
