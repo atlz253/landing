@@ -137,7 +137,10 @@ const { Content } = await render(news);
 
 <html lang="ru">
   <head>
-    <Head title={newsData.title} />
+    <Head
+      title={newsData.title}
+      description={`Музыкальная публикация «${newsData.title}» на сайте Федора Алексеева.`}
+    />
   </head>
   <Layout>
     <div class="contentWrapper">

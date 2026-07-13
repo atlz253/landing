@@ -31,6 +31,9 @@ if (!project) {
 }
 
 const { Content } = await render(project);
+const projectDescription = Array.isArray(project.data.description)
+  ? project.data.description.join(" ")
+  : project.data.description;
 
 const lightboxImages = project.data.images
   ? (
@@ -90,7 +93,10 @@ const lightboxImages = project.data.images
 
 <html lang="ru">
   <head>
-    <Head title={project.data.title} />
+    <Head
+      title={project.data.title}
+      description={projectDescription ?? `Проект «${project.data.title}» в портфолио Федора Алексеева.`}
+    />
   </head>
   <Layout>
     <div class="contentWrapper">
