@@ -91,7 +91,7 @@ class Particle {
     this.position.add(this.velocity.clone().multiplyScalar(time.delta));
   }
 
-  render(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
+  render(_canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
     const remainingLifetime = this.getRemainingLifetime();
 
     if (!remainingLifetime) return;
