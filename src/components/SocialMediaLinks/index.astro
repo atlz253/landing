@@ -18,10 +18,6 @@ const logoSize = 36;
     transition: scale var(--transition-duration-2);
   }
 
-  .link > svg:hover {
-    scale: 1.1;
-  }
-
   .link--github {
     display: inline-flex;
     border-radius: 50%;
@@ -32,6 +28,10 @@ const logoSize = 36;
 
   .link--github > svg {
     display: block;
+  }
+
+  .link > svg:hover {
+    scale: 1.1;
   }
 
   .link--github:hover {
