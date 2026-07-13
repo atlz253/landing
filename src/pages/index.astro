@@ -4,12 +4,39 @@ import FirstScreen from "../components/FirstScreen/index.astro";
 import Portfolio from "../components/Portfolio/index.astro";
 import Head from "../components/Head.astro";
 import Fireworks from "../components/Fireworks/index.astro";
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://italekseev.ru/#person",
+      name: "Федор Алексеев",
+      url: "https://italekseev.ru/",
+      jobTitle: "Веб-разработчик",
+      sameAs: [
+        "https://github.com/atlz253",
+        "https://t.me/+ONmOoTgmeDgxOWYy",
+        "https://vk.com/falexeev2014",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://italekseev.ru/#website",
+      name: "Федор Алексеев",
+      url: "https://italekseev.ru/",
+      inLanguage: "ru-RU",
+      publisher: { "@id": "https://italekseev.ru/#person" },
+    },
+  ],
+};
 ---
 
 <html lang="ru">
   <head>
     <Head
       description="Портфолио Федора Алексеева — веб-разработчика, инженера-программиста и исследователя."
+      structuredData={structuredData}
     />
   </head>
   <Layout>
