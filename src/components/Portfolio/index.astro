@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import TechnologyFilter from "../../features/viewPortfolio/components/TechnologyFilter/index.astro";
 import PortfolioCard from "./components/PortfolioCard.astro";
 
 const projects = (await getCollection("portfolio")).sort(
@@ -17,9 +18,18 @@ const projects = (await getCollection("portfolio")).sort(
     visibility: hidden;
   }
 
+  .portfolioEmpty {
+    margin: var(--space-6) 0;
+    color: var(--color-text-secondary);
+  }
+
   .tile {
     box-sizing: border-box;
     width: 100%;
+  }
+
+  .tile[hidden] {
+    display: none;
   }
 
   .tile[data-meowsonry-prevent-flick] {
@@ -58,15 +68,21 @@ const projects = (await getCollection("portfolio")).sort(
   }
 </style>
 
-<section id="portfolio">
-  {
-    projects.map((project) => (
-      <PortfolioCard
-        project={project}
-        class:list={["tile", "tile_" + project.id]}
-      />
-    ))
-  }
+<section>
+  <TechnologyFilter />
+  <p class="portfolioEmpty" hidden data-portfolio-empty>
+    Нет проектов с выбранным сочетанием технологий.
+  </p>
+  <div id="portfolio">
+    {
+      projects.map((project) => (
+        <PortfolioCard
+          project={project}
+          class:list={["tile", "tile_" + project.id]}
+        />
+      ))
+    }
+  </div>
 </section>
 
 <script>
@@ -89,6 +105,27 @@ const projects = (await getCollection("portfolio")).sort(
     });
   };
 
+  const updatePortfolioLayout = (container: HTMLElement) => {
+    const cards = Array.from(container.children).filter(
+      (child): child is HTMLElement => child instanceof HTMLElement,
+    );
+    const visibleCards = cards.filter((card) => !card.hidden);
+
+    if (visibleCards.length === 0) {
+      container.style.height = "0";
+      return;
+    }
+
+    if (visibleCards.length === cards.length) {
+      meowsonry({ container, middleware: [preventFlick(), gap(12)] });
+      return;
+    }
+
+    container.replaceChildren(...visibleCards);
+    meowsonry({ container, middleware: [preventFlick(), gap(12)] });
+    container.replaceChildren(...cards);
+  };
+
   document.addEventListener("astro:page-load", () => {
     const container = document.querySelector("#portfolio") as HTMLElement;
     if (!container) return;
@@ -97,8 +134,12 @@ const projects = (await getCollection("portfolio")).sort(
     clearPortfolioLayout(container);
 
     cancelUpdate = autoUpdate(container, () =>
-      meowsonry({ container, middleware: [preventFlick(), gap(12)] }),
+      updatePortfolioLayout(container),
     );
+
+    container.addEventListener("portfolio:filter-change", () => {
+      updatePortfolioLayout(container);
+    });
   });
 
   document.addEventListener("astro:before-preparation", () => {

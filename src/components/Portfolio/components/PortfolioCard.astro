@@ -77,7 +77,11 @@ const previewImage = project.data.images?.[0];
   }
 </style>
 
-<div class:list={["portfolioCardWrapper", className]} {...rest}>
+<div
+  class:list={["portfolioCardWrapper", className]}
+  data-project-technologies={project.data.technologies?.join(" ") ?? ""}
+  {...rest}
+>
   <Card class="portfolioCard">
     <h2>{project.data.title}</h2>
     {project.data.technologies && (

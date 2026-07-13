@@ -1,0 +1,10 @@
+---
+import Select from "../index.astro";
+
+const props = Astro.props;
+---
+
+<Select id="example-select" label="Example select" {...props}>
+  <option value="first">First option</option>
+  <option value="second">Second option</option>
+</Select>

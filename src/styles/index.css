@@ -226,6 +226,13 @@
     --color-link: var(--color-blue-5);
     --color-link-hover: var(--color-blue-7);
     --color-on-accent: var(--color-white);
+    --color-control-bg: var(--color-bg);
+    --color-control-text: var(--color-text-primary);
+    --color-control-border: var(--color-border);
+    --color-control-border-hover: var(--color-grey-6);
+    --color-control-focus: var(--color-blue-5);
+    --color-control-disabled-bg: var(--color-grey-2);
+    --color-control-disabled-text: var(--color-grey-6);
   }
 
   [data-theme="dark"] {
@@ -239,6 +246,10 @@
     --color-link: var(--color-blue-3);
     --color-link-hover: var(--color-blue-1);
     --color-on-accent: var(--color-white);
+    --color-control-border-hover: var(--color-grey-6);
+    --color-control-focus: var(--color-blue-3);
+    --color-control-disabled-bg: var(--color-grey-8);
+    --color-control-disabled-text: var(--color-grey-5);
 
     /* Тени — более заметные на тёмном фоне */
     --box-shadow-1: 0 2px 4px rgba(0, 0, 0, 0.4);

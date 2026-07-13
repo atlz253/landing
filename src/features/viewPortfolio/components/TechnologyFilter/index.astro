@@ -1,0 +1,221 @@
+---
+import Select from "../../../../ui/components/Select/index.astro";
+import { technologies } from "../../technologies";
+
+const technologyEntries = Object.entries(technologies).sort(([, first], [, second]) =>
+  first.label.localeCompare(second.label, "ru"),
+);
+---
+
+<style>
+  @layer ui {
+    .technologyFilter {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+
+    .technologyFilter__select {
+      width: min(100%, 18rem);
+    }
+
+    .technologyFilter__selected {
+      display: flex;
+      flex: 1 1 18rem;
+      flex-wrap: wrap;
+      min-height: calc(var(--font-size-3-line-height) + var(--space-6));
+      margin: 0;
+      padding: 0;
+      gap: var(--space-3);
+      list-style: none;
+    }
+
+    :global(.technologyFilter__chip) {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--space-9);
+      background-color: var(--technology-chip-bg, var(--technology-neutral-bg));
+      color: var(--technology-chip-text, var(--technology-neutral-text));
+      font-size: var(--font-size-1);
+      font-weight: 500;
+      line-height: var(--font-size-2-line-height);
+    }
+
+    :global(.technologyFilter__remove) {
+      display: grid;
+      position: relative;
+      width: var(--space-7);
+      height: var(--space-7);
+      padding: 0;
+      cursor: pointer;
+      appearance: none;
+      place-items: center;
+      color: inherit;
+      border: 0;
+      background: none;
+      font: inherit;
+      font-size: var(--font-size-3);
+      line-height: 1;
+    }
+
+    :global(.technologyFilter__remove::before),
+    :global(.technologyFilter__remove::after) {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: var(--space-3);
+      height: 1px;
+      content: "";
+      background-color: currentcolor;
+    }
+
+    :global(.technologyFilter__remove::before) {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    :global(.technologyFilter__remove::after) {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    :global(.technologyFilter__remove:focus-visible) {
+      outline: 2px solid currentcolor;
+      outline-offset: var(--space-1);
+    }
+  }
+</style>
+
+<div class="technologyFilter" data-technology-filter>
+  <Select
+    id="technology-filter"
+    class="technologyFilter__select"
+    label="Технологии"
+    labelHidden
+    placeholder="Выберите технологию"
+    data-technology-filter-select
+  >
+    {
+      technologyEntries.map(([id, technology]) => (
+        <option value={id}>{technology.label}</option>
+      ))
+    }
+  </Select>
+  <ul
+    class="technologyFilter__selected"
+    aria-label="Выбранные технологии"
+    aria-live="polite"
+    data-technology-filter-selected
+  ></ul>
+</div>
+
+<script>
+  const initializeTechnologyFilter = (filter: HTMLElement) => {
+    if (filter.dataset.initialized) return;
+    filter.dataset.initialized = "true";
+
+    const select = filter.querySelector<HTMLSelectElement>(
+      "[data-technology-filter-select]",
+    );
+    const selectedList = filter.querySelector<HTMLUListElement>(
+      "[data-technology-filter-selected]",
+    );
+    const portfolio = document.querySelector<HTMLElement>("#portfolio");
+    const noResults = document.querySelector<HTMLElement>("[data-portfolio-empty]");
+
+    if (!select || !selectedList || !portfolio || !noResults) return;
+
+    const placeholder = select.options[0];
+    const technologyOptions = Array.from(select.options).filter(
+      (option) => option.value,
+    );
+    const labels = new Map(
+      technologyOptions.map((option) => [option.value, option.text]),
+    );
+    const selectedTechnologies = new Set<string>();
+    const cards = Array.from(
+      portfolio.querySelectorAll<HTMLElement>(".tile"),
+    );
+
+    const update = () => {
+      const availableTechnologies = new Set<string>();
+      let visibleCardsCount = 0;
+
+      cards.forEach((card) => {
+        const cardTechnologies = new Set(
+          (card.dataset.projectTechnologies ?? "").split(" ").filter(Boolean),
+        );
+        const isVisible = Array.from(selectedTechnologies).every((id) =>
+          cardTechnologies.has(id),
+        );
+
+        card.hidden = !isVisible;
+        visibleCardsCount += Number(isVisible);
+        if (isVisible) {
+          cardTechnologies.forEach((id) => availableTechnologies.add(id));
+        }
+      });
+
+      const availableOptions = technologyOptions.filter(
+        (option) =>
+          !selectedTechnologies.has(option.value) &&
+          availableTechnologies.has(option.value),
+      );
+      select.replaceChildren(placeholder, ...availableOptions);
+      select.disabled = availableOptions.length === 0;
+      select.value = "";
+
+      selectedList.replaceChildren(
+        ...Array.from(selectedTechnologies).map((id) => {
+          const item = document.createElement("li");
+          const button = document.createElement("button");
+          const label = labels.get(id) ?? id;
+
+          item.className = "technologyFilter__chip";
+          item.style.setProperty(
+            "--technology-chip-bg",
+            `var(--technology-${id}-bg, var(--technology-neutral-bg))`,
+          );
+          item.style.setProperty(
+            "--technology-chip-text",
+            `var(--technology-${id}-text, var(--technology-neutral-text))`,
+          );
+          button.className = "technologyFilter__remove";
+          button.type = "button";
+          button.ariaLabel = `Убрать фильтр «${label}»`;
+          button.dataset.technologyId = id;
+          item.append(document.createTextNode(label), button);
+
+          return item;
+        }),
+      );
+
+      noResults.hidden = visibleCardsCount > 0;
+      portfolio.dispatchEvent(new CustomEvent("portfolio:filter-change"));
+    };
+
+    select.addEventListener("change", () => {
+      if (!select.value) return;
+      selectedTechnologies.add(select.value);
+      update();
+    });
+
+    selectedList.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLButtonElement)) return;
+
+      const { technologyId } = target.dataset;
+      if (!technologyId) return;
+      selectedTechnologies.delete(technologyId);
+      update();
+    });
+  };
+
+  document.addEventListener("astro:page-load", () => {
+    document
+      .querySelectorAll<HTMLElement>("[data-technology-filter]")
+      .forEach(initializeTechnologyFilter);
+  });
+</script>
