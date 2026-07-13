@@ -117,30 +117,24 @@ const tracksJson = JSON.stringify(tracks);
   }
 
   .audioPlayer__progress {
-    position: relative;
-    height: var(--space-1);
-    background-color: var(--color-grey-3);
-    border-radius: var(--space-9);
+    width: 100%;
+    margin: 0;
+    accent-color: var(--color-blue-5);
     cursor: pointer;
-    overflow: hidden;
     opacity: 0;
     max-height: 0;
     transition: opacity var(--transition-duration-2) ease,
       max-height var(--transition-duration-2) ease;
   }
 
+  .audioPlayer__progress:focus-visible {
+    outline: 2px solid var(--color-control-focus);
+    outline-offset: var(--space-2);
+  }
+
   .audioPlayer__track[data-active] .audioPlayer__progress {
     opacity: 1;
     max-height: var(--space-3);
-  }
-
-  .audioPlayer__progressFill {
-    position: absolute;
-    inset: 0;
-    width: 0%;
-    background-color: var(--color-blue-5);
-    border-radius: var(--space-9);
-    transition: width var(--transition-duration-1) linear;
   }
 
   .audioPlayer__time {
@@ -293,24 +287,17 @@ const tracksJson = JSON.stringify(tracks);
     display: block;
   }
 
-  .audioPlayer__volumeBar {
+  .audioPlayer__volumeRange {
     width: 100px;
     flex-shrink: 0;
-    position: relative;
-    height: var(--space-1);
-    background-color: var(--color-grey-3);
-    border-radius: var(--space-9);
+    margin: 0;
+    accent-color: var(--color-blue-5);
     cursor: pointer;
-    overflow: hidden;
   }
 
-  .audioPlayer__volumeFill {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    background-color: var(--color-blue-5);
-    border-radius: var(--space-9);
-    transition: width var(--transition-duration-1) linear;
+  .audioPlayer__volumeRange:focus-visible {
+    outline: 2px solid var(--color-control-focus);
+    outline-offset: var(--space-2);
   }
 
   .audioPlayer__audio {
@@ -342,9 +329,17 @@ const tracksJson = JSON.stringify(tracks);
           </button>
           <div class="audioPlayer__trackInfo">
             <span class="audioPlayer__title">{track.title ?? `Трек ${index + 1}`}</span>
-            <div class="audioPlayer__progress" data-progress>
-              <div class="audioPlayer__progressFill" data-progress-fill />
-            </div>
+            <input
+              class="audioPlayer__progress"
+              data-progress
+              type="range"
+              min="0"
+              max="0"
+              value="0"
+              step="0.1"
+              aria-label="Позиция воспроизведения"
+              disabled
+            />
           </div>
           <span class="audioPlayer__time" data-time>--:--</span>
           <button class="audioPlayer__downloadBtn" data-download-btn type="button" aria-label="Скачать">
@@ -372,9 +367,16 @@ const tracksJson = JSON.stringify(tracks);
         <VolumeOnIcon class="audioPlayer__icon audioPlayer__iconVolumeOn" width={20} height={20} aria-hidden="true" />
         <VolumeOffIcon class="audioPlayer__icon audioPlayer__iconVolumeOff" width={20} height={20} aria-hidden="true" />
       </button>
-      <div class="audioPlayer__volumeBar" data-volume-bar>
-        <div class="audioPlayer__volumeFill" data-volume-fill />
-      </div>
+      <input
+        class="audioPlayer__volumeRange"
+        data-volume-range
+        type="range"
+        min="0"
+        max="100"
+        value="100"
+        step="1"
+        aria-label="Громкость"
+      />
     </div>
   </div>
   <audio class="audioPlayer__audio" preload="metadata" data-audio-element>
@@ -410,13 +412,19 @@ const tracksJson = JSON.stringify(tracks);
   let isSeeking = false;
   let volume = 1;
   let isMuted = false;
-  let isVolumeDragging = false;
 
   function updateVolumeUI() {
     if (!player) return;
     const ctrl = player.querySelector<HTMLElement>("[data-volume-control]");
-    const fill = ctrl?.querySelector<HTMLElement>("[data-volume-fill]");
-    if (fill) fill.style.width = `${(isMuted ? 0 : volume) * 100}%`;
+    const range = ctrl?.querySelector<HTMLInputElement>("[data-volume-range]");
+    if (range) {
+      const displayedVolume = Math.round((isMuted ? 0 : volume) * 100);
+      range.value = String(displayedVolume);
+      range.setAttribute(
+        "aria-valuetext",
+        isMuted ? "Без звука" : `Громкость ${displayedVolume}%`,
+      );
+    }
     if (ctrl) {
       if (isMuted) ctrl.setAttribute("data-muted", "");
       else ctrl.removeAttribute("data-muted");
@@ -442,50 +450,9 @@ const tracksJson = JSON.stringify(tracks);
     updateVolumeUI();
   }
 
-  function calcVolumeLevel(clientX: number): number {
-    const bar = player?.querySelector<HTMLElement>("[data-volume-bar]");
-    if (!bar) return 0;
-    const rect = bar.getBoundingClientRect();
-    return Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-  }
-
-  function handleVolumeBarMouseDown(e: MouseEvent) {
-    isVolumeDragging = true;
-    setVolume(calcVolumeLevel(e.clientX));
-    document.addEventListener("mousemove", handleVolumeMouseMove);
-    document.addEventListener("mouseup", handleVolumeMouseUp);
-  }
-
-  function handleVolumeMouseMove(e: MouseEvent) {
-    if (!isVolumeDragging) return;
-    const level = calcVolumeLevel(e.clientX);
-    const ctrl = player?.querySelector<HTMLElement>("[data-volume-control]");
-    const fill = ctrl?.querySelector<HTMLElement>("[data-volume-fill]");
-    if (fill) fill.style.width = `${level * 100}%`;
-  }
-
-  function handleVolumeMouseUp(e: MouseEvent) {
-    if (!isVolumeDragging) return;
-    isVolumeDragging = false;
-    setVolume(calcVolumeLevel(e.clientX));
-    document.removeEventListener("mousemove", handleVolumeMouseMove);
-    document.removeEventListener("mouseup", handleVolumeMouseUp);
-  }
-
-  function handleVolumeBarTouchMove(e: TouchEvent) {
-    const touch = e.touches[0];
-    if (!touch) return;
-    e.preventDefault();
-    const level = calcVolumeLevel(touch.clientX);
-    const ctrl = player?.querySelector<HTMLElement>("[data-volume-control]");
-    const fill = ctrl?.querySelector<HTMLElement>("[data-volume-fill]");
-    if (fill) fill.style.width = `${level * 100}%`;
-  }
-
-  function handleVolumeBarTouchEnd(e: TouchEvent) {
-    const touch = e.changedTouches[0];
-    if (!touch) return;
-    setVolume(calcVolumeLevel(touch.clientX));
+  function handleVolumeInput(e: Event) {
+    const range = e.currentTarget as HTMLInputElement;
+    setVolume(Number(range.value) / 100);
   }
 
   function handleVolumeChange() {
@@ -566,6 +533,10 @@ const tracksJson = JSON.stringify(tracks);
         } else {
           el.removeAttribute("data-playing");
         }
+        const progress = el.querySelector<HTMLInputElement>("[data-progress]");
+        if (progress) {
+          progress.disabled = !isActive || !audio?.duration;
+        }
         const playBtn = el.querySelector<HTMLButtonElement>("[data-play-btn]");
         if (playBtn) {
           playBtn.setAttribute(
@@ -581,12 +552,20 @@ const tracksJson = JSON.stringify(tracks);
     if (!audio || currentIndex < 0) return;
     const trackEl = getTrackEl(currentIndex);
     if (!trackEl) return;
-    const fill = trackEl.querySelector<HTMLElement>("[data-progress-fill]");
+    const progress = trackEl.querySelector<HTMLInputElement>("[data-progress]");
     const timeEl = trackEl.querySelector<HTMLElement>("[data-time]");
-    const percent = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
-    if (fill) fill.style.width = `${percent}%`;
+    const duration = Number.isFinite(audio.duration) ? audio.duration : 0;
+    if (progress) {
+      progress.max = String(duration);
+      progress.value = String(Math.min(audio.currentTime, duration));
+      progress.disabled = duration === 0;
+      progress.setAttribute(
+        "aria-valuetext",
+        `${formatTime(audio.currentTime)} из ${formatTime(duration)}`,
+      );
+    }
     if (timeEl) {
-      timeEl.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+      timeEl.textContent = `${formatTime(audio.currentTime)} / ${formatTime(duration)}`;
     }
   }
 
@@ -681,48 +660,10 @@ const tracksJson = JSON.stringify(tracks);
     document.body.removeChild(a);
   }
 
-  function handleProgressInteraction(
-    e: MouseEvent | TouchEvent,
-  ): number | null {
-    const target = e.currentTarget as HTMLElement;
-    const trackEl = target.closest<HTMLElement>("[data-track-index]");
-    if (!trackEl) return null;
-    const idx = Number(trackEl.getAttribute("data-track-index"));
-    if (idx !== currentIndex) return null;
-    const rect = target.getBoundingClientRect();
-    let clientX: number;
-    if ("touches" in e && e.touches.length > 0) {
-      clientX = e.touches[0].clientX;
-    } else if ("clientX" in e) {
-      clientX = e.clientX;
-    } else {
-      return null;
-    }
-    const percent = (clientX - rect.left) / rect.width;
-    return percent;
-  }
-
-  function handleProgressClick(e: MouseEvent) {
-    const percent = handleProgressInteraction(e);
-    if (percent === null) return;
-    seekTo(percent);
-  }
-
-  function handleProgressTouchMove(e: TouchEvent) {
-    const percent = handleProgressInteraction(e);
-    if (percent === null) return;
-    e.preventDefault();
+  function handleProgressInput(e: Event) {
     if (!audio || !audio.duration) return;
-    const trackEl = getTrackEl(currentIndex);
-    if (!trackEl) return;
-    const fill = trackEl.querySelector<HTMLElement>("[data-progress-fill]");
-    if (fill) fill.style.width = `${Math.max(0, Math.min(percent, 1)) * 100}%`;
-  }
-
-  function handleProgressTouchEnd(e: TouchEvent) {
-    const percent = handleProgressInteraction(e);
-    if (percent === null) return;
-    seekTo(percent);
+    const range = e.currentTarget as HTMLInputElement;
+    seekTo(Number(range.value) / audio.duration);
   }
 
   function handlePlay() {
@@ -784,21 +725,15 @@ const tracksJson = JSON.stringify(tracks);
       btn.addEventListener("click", handleDownloadClick);
     });
 
-    player.querySelectorAll<HTMLElement>("[data-progress]").forEach((bar) => {
-      bar.addEventListener("click", handleProgressClick);
-      bar.addEventListener("touchmove", handleProgressTouchMove, { passive: false });
-      bar.addEventListener("touchend", handleProgressTouchEnd, { passive: true });
+    player.querySelectorAll<HTMLInputElement>("[data-progress]").forEach((range) => {
+      range.addEventListener("input", handleProgressInput);
     });
 
     player.querySelector<HTMLButtonElement>("[data-prev-btn]")?.addEventListener("click", handlePrevClick);
     player.querySelector<HTMLButtonElement>("[data-global-play-btn]")?.addEventListener("click", handleGlobalPlayClick);
     player.querySelector<HTMLButtonElement>("[data-next-btn]")?.addEventListener("click", handleNextClick);
     player.querySelector<HTMLButtonElement>("[data-mute-btn]")?.addEventListener("click", toggleMute);
-    player.querySelectorAll<HTMLElement>("[data-volume-bar]").forEach((bar) => {
-      bar.addEventListener("mousedown", handleVolumeBarMouseDown);
-      bar.addEventListener("touchmove", handleVolumeBarTouchMove, { passive: false });
-      bar.addEventListener("touchend", handleVolumeBarTouchEnd, { passive: true });
-    });
+    player.querySelector<HTMLInputElement>("[data-volume-range]")?.addEventListener("input", handleVolumeInput);
   }
 
   function destroy() {
@@ -819,26 +754,17 @@ const tracksJson = JSON.stringify(tracks);
     player?.querySelectorAll<HTMLButtonElement>("[data-download-btn]").forEach((btn) => {
       btn.removeEventListener("click", handleDownloadClick);
     });
-    player?.querySelectorAll<HTMLElement>("[data-progress]").forEach((bar) => {
-      bar.removeEventListener("click", handleProgressClick);
-      bar.removeEventListener("touchmove", handleProgressTouchMove);
-      bar.removeEventListener("touchend", handleProgressTouchEnd);
+    player?.querySelectorAll<HTMLInputElement>("[data-progress]").forEach((range) => {
+      range.removeEventListener("input", handleProgressInput);
     });
-    document.removeEventListener("mousemove", handleVolumeMouseMove);
-    document.removeEventListener("mouseup", handleVolumeMouseUp);
     player?.querySelector<HTMLButtonElement>("[data-prev-btn]")?.removeEventListener("click", handlePrevClick);
     player?.querySelector<HTMLButtonElement>("[data-global-play-btn]")?.removeEventListener("click", handleGlobalPlayClick);
     player?.querySelector<HTMLButtonElement>("[data-next-btn]")?.removeEventListener("click", handleNextClick);
     player?.querySelector<HTMLButtonElement>("[data-mute-btn]")?.removeEventListener("click", toggleMute);
-    player?.querySelectorAll<HTMLElement>("[data-volume-bar]").forEach((bar) => {
-      bar.removeEventListener("mousedown", handleVolumeBarMouseDown);
-      bar.removeEventListener("touchmove", handleVolumeBarTouchMove);
-      bar.removeEventListener("touchend", handleVolumeBarTouchEnd);
-    });
+    player?.querySelector<HTMLInputElement>("[data-volume-range]")?.removeEventListener("input", handleVolumeInput);
     currentIndex = -1;
     isPlaying = false;
     isSeeking = false;
-    isVolumeDragging = false;
   }
 
   document.addEventListener("astro:page-load", init);
