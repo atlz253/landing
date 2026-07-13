@@ -23,7 +23,7 @@ const {
 
 const pageTitle = [title, "Федор Алексеев"].filter((p) => p).join(" | ");
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
-const socialImageUrl = image ? new URL(image, Astro.site).href : undefined;
+const socialImageUrl = new URL(image ?? "/social-preview.png", Astro.site).href;
 const structuredDataJson = structuredData
   ? JSON.stringify(structuredData).replace(/</g, "\\u003c")
   : undefined;
@@ -51,11 +51,11 @@ const structuredDataJson = structuredData
 <meta property="og:title" content={pageTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonicalUrl} />
-{socialImageUrl && <meta property="og:image" content={socialImageUrl} />}
-<meta name="twitter:card" content={socialImageUrl ? "summary_large_image" : "summary"} />
+<meta property="og:image" content={socialImageUrl} />
+<meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={pageTitle} />
 <meta name="twitter:description" content={description} />
-{socialImageUrl && <meta name="twitter:image" content={socialImageUrl} />}
+<meta name="twitter:image" content={socialImageUrl} />
 {
   structuredDataJson && (
     <script is:inline type="application/ld+json" set:html={structuredDataJson} />
