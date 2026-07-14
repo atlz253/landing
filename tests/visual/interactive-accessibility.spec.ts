@@ -7,8 +7,13 @@ async function expectNoAccessibilityViolations(page: Page, selector: string) {
   expect(results.violations).toEqual([]);
 }
 
+async function gotoPage(page: Page, url: string) {
+  await page.goto(url, { waitUntil: "domcontentloaded" });
+  await page.evaluate(() => document.dispatchEvent(new Event("astro:page-load")));
+}
+
 test("theme toggle updates and persists the selected theme", async ({ page }) => {
-  await page.goto("/");
+  await gotoPage(page, "/");
 
   const root = page.locator("html");
   const toggle = page.getByRole("button", { name: "Переключить тему" });
@@ -26,7 +31,7 @@ test("theme toggle updates and persists the selected theme", async ({ page }) =>
 });
 
 test("technology filter can be added and removed accessibly", async ({ page }) => {
-  await page.goto("/");
+  await gotoPage(page, "/");
 
   const select = page.locator("#technology-filter");
   const technology = (await select.locator("option").nth(1).textContent()) ?? "";
@@ -42,7 +47,8 @@ test("technology filter can be added and removed accessibly", async ({ page }) =
 });
 
 test("lightbox supports keyboard navigation and closing", async ({ page }) => {
-  await page.goto(
+  await gotoPage(
+    page,
     "/music/%D0%BE%D1%82%D1%87%D0%B5%D1%82%D0%BD%D1%8B%D0%B9-%D0%BA%D0%BE%D0%BD%D1%86%D0%B5%D1%80%D1%82-%D0%B6%D0%B7-2025",
   );
 

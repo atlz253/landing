@@ -1,11 +1,17 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+
+async function gotoPage(page: Page, url: string) {
+  await page.goto(url, { waitUntil: "domcontentloaded" });
+  await page.evaluate(() => document.dispatchEvent(new Event("astro:page-load")));
+}
 
 test("audio player ranges support keyboard interaction", async ({ page, browserName }) => {
   await page.route(/https:\/\/runtime\.video\.cloud\.yandex\.net\//, (route) =>
     route.abort(),
   );
-  await page.goto(
+  await gotoPage(
+    page,
     "/music/%D0%BF%D1%83%D1%88%D0%B8%D1%81%D1%82%D1%8B%D0%B9-%D1%85%D0%B2%D0%BE%D1%81%D1%82-%D0%BB%D0%B8%D1%81%D0%B8%D1%86%D1%8B",
   );
 

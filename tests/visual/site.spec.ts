@@ -50,14 +50,42 @@ async function waitForVisualStability(page: Page) {
       (image as HTMLImageElement).loading = "eager";
     }
   });
+
   await page.evaluate(async () => {
-    await Promise.race([
-      document.fonts.ready,
-      new Promise<void>((resolve) => window.setTimeout(resolve, 2_000)),
-    ]);
+    const fontFaces = [
+      '400 16px "IBM Plex Sans"',
+      '500 16px "IBM Plex Sans"',
+      '600 16px "IBM Plex Sans"',
+    ];
+
+    await Promise.all(fontFaces.map((fontFace) => document.fonts.load(fontFace)));
+    await document.fonts.ready;
+
+    if (!fontFaces.every((fontFace) => document.fonts.check(fontFace))) {
+      throw new Error("IBM Plex Sans did not load");
+    }
   });
-  // Responsive images can change the full-page height after their first layout pass.
-  await page.waitForTimeout(3_000);
+
+  await expect
+    .poll(() =>
+      page.locator("img").evaluateAll((images) =>
+        images.every((image) => {
+          const htmlImage = image as HTMLImageElement;
+
+          return !htmlImage.getAttribute("src") || (htmlImage.complete && htmlImage.naturalWidth > 0);
+        }),
+      ),
+    )
+    .toBe(true);
+
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) => {
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => resolve());
+        });
+      }),
+  );
   await expect(page.locator("body")).toBeVisible();
 }
 

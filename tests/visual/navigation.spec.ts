@@ -1,10 +1,15 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+async function gotoPage(page: Page, url: string) {
+  await page.goto(url, { waitUntil: "domcontentloaded" });
+  await page.evaluate(() => document.dispatchEvent(new Event("astro:page-load")));
+}
 
 test("navigation remains accessible on small screens", async ({ page }, testInfo) => {
   const viewportWidth = testInfo.project.use.viewport?.width ?? 0;
   test.skip(viewportWidth > 520, "This scenario covers mobile navigation only.");
 
-  await page.goto("/music");
+  await gotoPage(page, "/music");
 
   const navigation = page.getByRole("navigation", { name: "Основная навигация" });
   const musicLink = page.getByRole("link", { name: "Музыка" });
