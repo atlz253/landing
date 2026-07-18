@@ -5,6 +5,7 @@ info:
 servers:
   - url: https://d5dulh48dglpl0ifmef6.akta928u.apigw.yandexcloud.net
   - url: https://italekseev.ru
+  - url: https://www.italekseev.ru
 paths:
   /:
     get:
