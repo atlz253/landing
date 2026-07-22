@@ -1,6 +1,7 @@
 ---
 import ChevronPrev from "./assets/chevron-prev.svg";
 import ChevronNext from "./assets/chevron-next.svg";
+import Close from "./assets/close.svg";
 import Button from "../../ui/components/Button/index.astro";
 
 interface ImageEntry {
@@ -87,7 +88,6 @@ const imagesJson = JSON.stringify(images);
 
   .lightbox__close-btn {
     margin-left: var(--space-8);
-    font-size: 1.75rem;
   }
 
   .lightbox__counter {
@@ -144,7 +144,7 @@ const imagesJson = JSON.stringify(images);
       <ChevronNext />
     </Button>
     <Button variant="ghost" class="lightbox__btn lightbox__close-btn" aria-label="Закрыть" data-lightbox-close>
-      &times;
+      <Close />
     </Button>
   </div>
 </dialog>
