@@ -47,5 +47,8 @@ const autoplayNewsIds = new Set(
     );
   });
 
-  document.addEventListener("astro:before-preparation", () => cancelUpdate?.());
+  document.addEventListener("astro:before-preparation", () => {
+    cancelUpdate?.();
+    cancelUpdate = undefined;
+  });
 </script>

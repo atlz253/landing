@@ -90,21 +90,6 @@ const projects = (await getCollection("portfolio")).sort(
 
   let cancelUpdate: undefined | (() => void);
 
-  const clearPortfolioLayout = (container: HTMLElement) => {
-    container.style.height = "";
-    container.style.position = "";
-
-    Array.from(container.children).forEach((child) => {
-      if (!(child instanceof HTMLElement)) return;
-
-      Object.assign(child.style, {
-        left: "",
-        position: "",
-        top: "",
-      });
-    });
-  };
-
   const updatePortfolioLayout = (container: HTMLElement) => {
     const cards = Array.from(container.children).filter(
       (child): child is HTMLElement => child instanceof HTMLElement,
@@ -131,7 +116,6 @@ const projects = (await getCollection("portfolio")).sort(
     if (!container) return;
 
     cancelUpdate?.();
-    clearPortfolioLayout(container);
 
     cancelUpdate = autoUpdate(container, () =>
       updatePortfolioLayout(container),
@@ -145,10 +129,5 @@ const projects = (await getCollection("portfolio")).sort(
   document.addEventListener("astro:before-preparation", () => {
     cancelUpdate?.();
     cancelUpdate = undefined;
-
-    const container = document.querySelector("#portfolio") as HTMLElement;
-    if (container) {
-      clearPortfolioLayout(container);
-    }
   });
 </script>
