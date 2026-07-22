@@ -6,4 +6,5 @@ technologies:
   - typescript
   - yandex-cloud
   - github-actions
+  - javascript
 ---

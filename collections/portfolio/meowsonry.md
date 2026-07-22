@@ -10,6 +10,7 @@ technologies:
   - typescript
   - playwright
   - vitest
+  - javascript
 ---
 
 Meowsonry - небольшая библиотека для построения masonry layout без привязки к конкретному UI-фреймворку.

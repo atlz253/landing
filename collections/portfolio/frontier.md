@@ -8,4 +8,5 @@ technologies:
   - typescript
   - nodejs
   - vitest
+  - javascript
 ---

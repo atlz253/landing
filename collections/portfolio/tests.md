@@ -9,6 +9,8 @@ technologies:
   - ant-design
   - postgresql
   - react-bootstrap
+  - javascript
+  - typescript
 images:
   - /collections/portfolio/gameWatch.png
   - /collections/portfolio/audioDealer.png

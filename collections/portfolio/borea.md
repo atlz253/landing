@@ -15,6 +15,8 @@ technologies:
   - vitest
   - playwright
   - vite
+  - typescript
+  - javascript
 ---
 
 Borea - open source рабочее пространство для разработки программного обеспечения, вдохновленное JetBrains Space и Yandex SourceCraft.
